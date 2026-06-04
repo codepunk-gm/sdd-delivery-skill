@@ -4,26 +4,33 @@
 
 ## 中文说明
 
-SDD Delivery 是一个面向 AI 编程助手的 Spec-first 研发交付技能。它把 PRD 先整理成可审查的 Spec，再推进到技术方案、方案审查、实现任务、代码实现、单测计划、单测报告、交付审查，以及可恢复的检查点和可观测面板。
+SDD Delivery 是一个面向 AI 编程助手的 Spec-first 研发交付技能。安装后，用户不需要记脚本命令，只需要发送 PRD 或选择阶段，AI 就会按流程生成和维护交付产物。
 
-## 视觉概览
+## 如何安装
 
-![SDD Delivery Hero](assets/images/sdd-delivery-hero.png)
+复制当前 skill 目录到 Codex skills 目录：
 
-![SDD Delivery Workflow](assets/images/workflow-diagram.png)
+```bash
+cp -R sdd-delivery ~/.codex/skills/sdd-delivery
+```
 
-![Friendly Guided Interaction](assets/images/interaction-demo.png)
+Windows 可以复制到：
 
-## 核心能力
+```text
+%USERPROFILE%\.codex\skills\sdd-delivery
+```
 
-- **Spec 前置**：PRD 先转成 Spec，再进入评审和技术方案。
-- **需求追踪**：通过 `03-requirement-trace.md` 串联 PRD、Spec、方案、任务、代码和单测。
-- **审查关卡**：内置 Spec 审查、方案审查和交付审查。
-- **单测闭环**：支持单测计划、单测报告，以及 `SPEC-*` 反查测试覆盖。
-- **可观测交付**：维护检查点、事件日志和可观测面板。
-- **无 Python 兜底**：脚本是加速器；没有 Python 时，agent 仍可手动维护 Markdown / JSON 产物。
+如果通过 plugin 安装，请使用仓库根目录的 `.codex-plugin/plugin.json`。
 
-## 推荐交互
+## 如何使用
+
+在 Codex 中输入：
+
+```text
+使用 sdd-delivery，基于这个 PRD 生成 Spec、技术方案、审查清单、实现任务、单测计划和可观测交付产物。
+```
+
+推荐启动菜单：
 
 ```text
 请选择要执行的 SDD Delivery 阶段：
@@ -41,9 +48,32 @@ SDD Delivery 是一个面向 AI 编程助手的 Spec-first 研发交付技能。
 请发送 PRD，或回复编号继续。
 ```
 
-## 快速开始
+## 视觉概览
 
-如果当前环境有 Python，可以用脚本加速：
+![SDD Delivery Hero](assets/images/sdd-delivery-hero.png)
+
+![SDD Delivery Workflow](assets/images/workflow-diagram.png)
+
+![Friendly Guided Interaction](assets/images/interaction-demo.png)
+
+## 核心能力
+
+- PRD 转 Spec
+- Spec 审查
+- 技术方案与方案审查
+- 需求追踪矩阵
+- 实现任务拆分
+- 单测计划和单测报告
+- 检查点与可观测面板
+- 无 Python 模式
+
+## 无 Python 模式
+
+Python 不是使用前提。没有 Python 时，AI 应直接手动创建和更新 Markdown / JSON 产物，并说明哪些自动化步骤被跳过。
+
+## 可选脚本
+
+有 Python 时，可以使用脚本加速：
 
 ```bash
 python scripts/init_artifacts.py login-rate-limit
@@ -54,44 +84,25 @@ python scripts/sync_observability.py .sdd-delivery/login-rate-limit
 python scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
 ```
 
-生成的交付产物位于：
-
-```text
-.sdd-delivery/login-rate-limit/
-├── 00-prd.md
-├── 01-spec.md
-├── 02-spec-review.md
-├── 03-requirement-trace.md
-├── 04-tech-solution.md
-├── 05-solution-review.md
-├── 06-implementation-tasks.md
-├── 07-implementation-log.md
-├── 08-unit-test-plan.md
-├── 09-unit-test-report.md
-├── 10-delivery-review.md
-├── 11-checkpoint.json
-├── 12-observability.md
-└── events.jsonl
-```
-
-## 无 Python 模式
-
-如果本地没有 Python，技能不应该中断。Agent 应直接创建同样的 Markdown / JSON 产物，并说明哪些自动化步骤被跳过。
-
 ## English
 
-SDD Delivery is a Spec-first delivery skill for AI coding agents. It turns PRDs into reviewable Specs, then continues through technical solution design, review gates, implementation tasks, coding, unit test planning, unit test reporting, delivery review, checkpoints, and observability.
+SDD Delivery is a Spec-first delivery skill for AI coding agents. Users do not need to remember script commands. They can send a PRD or choose a workflow stage, and the agent maintains the delivery artifacts.
 
-## Features
+## Installation
 
-- **Spec-first delivery**: normalize PRDs into reviewable Specs before solution design.
-- **Traceability**: connect PRD items, Spec items, solution sections, tasks, code, and tests.
-- **Review gates**: built-in Spec Review, Solution Review, and Delivery Review.
-- **Unit test loop**: maintain unit test plans, reports, and reverse `SPEC-*` coverage scans.
-- **Observable delivery**: keep checkpoints, events, and an observability dashboard.
-- **No Python fallback**: scripts are accelerators; the workflow still works with manual Markdown / JSON updates.
+Copy this skill directory into Codex skills:
 
-## Guided Interaction
+```bash
+cp -R sdd-delivery ~/.codex/skills/sdd-delivery
+```
+
+## Usage
+
+```text
+Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation tasks, unit tests, and observable delivery artifacts.
+```
+
+Recommended menu:
 
 ```text
 Choose an SDD Delivery stage:
@@ -104,19 +115,17 @@ Choose an SDD Delivery stage:
 7. Unit Test Plan / Report
 8. Trace / Coverage
 9. GitHub PR / CI Assets
-10. 检查点 / 交接
+10. Checkpoint / Handoff
 
 Send a PRD or reply with a number.
 ```
 
-## Quick Start
+## Optional Scripts
+
+Scripts are optional accelerators:
 
 ```bash
 python scripts/init_artifacts.py login-rate-limit
 python scripts/parse_prd_to_spec.py prd.md .sdd-delivery/login-rate-limit --force
-python scripts/trace_coverage.py .sdd-delivery/login-rate-limit
-python scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-report --update-trace
-python scripts/sync_observability.py .sdd-delivery/login-rate-limit
 python scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
 ```
-

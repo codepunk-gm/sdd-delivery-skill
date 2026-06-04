@@ -4,101 +4,63 @@
 
 ## 中文说明
 
-SDD Delivery 是一个面向 AI 编程助手的研发交付插件。它把 PRD 先整理成可审查的 Spec，再推进到技术方案、方案审查、实现任务、代码实现、单测计划、单测报告、交付审查，以及可恢复的检查点和可观测面板。
+SDD Delivery 是一个面向 AI 编程助手的 Spec-first 研发交付插件。它的目标不是让 AI 直接“看 PRD 写代码”，而是把交付过程拆成可审查、可追踪、可恢复的步骤：PRD 先转成 Spec，再进入方案、审查、实现、单测和交付检查。
 
-它适合希望把 AI 编程过程标准化的团队：不是让模型直接“看 PRD 写代码”，而是让每一步都有产物、有审查、有追踪、有恢复点。
+## 安装与使用
 
-## 视觉概览
+### 方式一：作为 Codex 插件安装（推荐）
 
-### 项目定位
-
-![SDD Delivery Hero](assets/images/sdd-delivery-hero.png)
-
-### 完整流程
-
-![SDD Delivery Workflow](assets/images/workflow-diagram.png)
+如果你使用 Codex 客户端，推荐直接安装本仓库对应的插件包。仓库地址：
 
 ```text
-PRD → Spec → Spec 审查 → 需求追踪矩阵 → 技术方案 → 方案审查 → 实现任务 → 代码实现 → 单测 → 交付审查 → Checkpoint 与可观测面板
+https://github.com/codepunk-gm/sdd-delivery-skill.git
 ```
 
-### 交互示例
-
-![Friendly Guided Interaction](assets/images/interaction-demo.png)
-
-## 核心能力
-
-- **Spec 前置**：PRD 先转成 Spec，再进入评审和技术方案。
-- **需求追踪**：通过 `03-requirement-trace.md` 串联 PRD、Spec、方案、任务、代码和单测。
-- **审查关卡**：内置 Spec 审查、方案审查和交付审查。
-- **单测闭环**：支持单测计划、单测报告，以及 `SPEC-*` 反查测试覆盖。
-- **可观测交付**：维护检查点、事件日志和可观测面板。
-- **可恢复上下文**：适合长任务、上下文压缩、切换智能体或中断后继续。
-- **无 Python 兜底**：脚本是加速器；没有 Python 时，agent 仍可用 Markdown / JSON 手动维护产物。
-- **Plugin 分发**：可作为 Codex 插件安装和使用。
-
-## 推荐工作流
-
-```text
-1. PRD 输入
-2. 生成 Spec
-3. 审查 Spec
-4. 维护需求追踪矩阵
-5. 生成技术方案
-6. 审查技术方案
-7. 拆分实现任务
-8. 编码实现
-9. 编写和执行单测
-10. 交付审查
-11. 更新 checkpoint 和可观测面板
-```
-
-## 目录结构
-
-```text
-sdd-delivery/
-├── .codex-plugin/
-│   └── plugin.json
-├── README.md
-├── assets/
-│   └── images/
-└── skills/
-    └── sdd-delivery/
-        ├── SKILL.md
-        ├── README.md
-        ├── agents/
-        ├── references/
-        ├── scripts/
-        └── assets/
-```
-
-## 安装方式
-
-### 作为 Codex 插件安装
-
-推荐将本仓库作为 Codex plugin 安装。安装后，在 Codex 中直接调用：
+安装完成后，在 Codex 中直接输入：
 
 ```text
 使用 sdd-delivery，基于这个 PRD 生成 Spec、技术方案、审查清单、实现任务、单测计划和可观测交付产物。
 ```
 
-也可以使用英文调用：
+或者使用英文：
 
 ```text
 Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation tasks, unit tests, and observable delivery artifacts.
 ```
 
-### 作为纯技能使用
+### 方式二：作为普通 Skill 安装
 
-如果不使用 plugin，也可以复制内置 skill 目录：
+如果你只想安装 skill，可以复制内置目录：
 
 ```bash
 cp -R skills/sdd-delivery ~/.codex/skills/sdd-delivery
 ```
 
-## 交互方式
+Windows 可以复制到：
 
-加载技能后，如果用户没有指定阶段，建议先展示中文能力菜单：
+```text
+%USERPROFILE%\.codex\skills\sdd-delivery
+```
+
+### 方式三：在其他 AI 编程工具中使用
+
+如果使用 Claude Code、Cursor、GitHub Copilot Chat、Windsurf 或 Continue，可以让工具先读取：
+
+```text
+skills/sdd-delivery/SKILL.md
+```
+
+然后使用类似提示：
+
+```text
+请按照 SDD Delivery 的流程处理这个 PRD。先生成 Spec，再进行审查、技术方案、任务拆分、实现和单测。没有 Python 时，请直接手动维护 Markdown / JSON 产物。
+```
+
+## 日常使用方式
+
+用户不需要记脚本命令。正常使用时，只要把 PRD 发给 AI，并选择下一步即可。
+
+推荐的启动交互：
 
 ```text
 请选择要执行的 SDD Delivery 阶段：
@@ -116,7 +78,7 @@ cp -R skills/sdd-delivery ~/.codex/skills/sdd-delivery
 请发送 PRD，或回复编号继续。
 ```
 
-对于小改动，可以走轻量模式：
+对于小改动，可以选择轻量模式：
 
 ```text
 这个需求看起来比较小，可以选择：
@@ -124,23 +86,41 @@ cp -R skills/sdd-delivery ~/.codex/skills/sdd-delivery
 2. 完整流程：Spec、审查、需求追踪、单测、检查点
 ```
 
-## 快速开始
+## 视觉概览
 
-脚本不是必须的；如果本地有 Python，可以用下面的命令加速生成产物：
+### 项目定位
 
-```bash
-python skills/sdd-delivery/scripts/init_artifacts.py login-rate-limit
-python skills/sdd-delivery/scripts/parse_prd_to_spec.py prd.md .sdd-delivery/login-rate-limit --force
-python skills/sdd-delivery/scripts/trace_coverage.py .sdd-delivery/login-rate-limit
-python skills/sdd-delivery/scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-report --update-trace
-python skills/sdd-delivery/scripts/sync_observability.py .sdd-delivery/login-rate-limit
-python skills/sdd-delivery/scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
-```
+![SDD Delivery Hero](assets/images/sdd-delivery-hero.png)
 
-生成的交付产物位于：
+### 完整流程
+
+![SDD Delivery Workflow](assets/images/workflow-diagram.png)
 
 ```text
-.sdd-delivery/login-rate-limit/
+PRD → Spec → Spec 审查 → 需求追踪矩阵 → 技术方案 → 方案审查 → 实现任务 → 代码实现 → 单测 → 交付审查 → 检查点与可观测面板
+```
+
+### 交互示例
+
+![Friendly Guided Interaction](assets/images/interaction-demo.png)
+
+## 核心能力
+
+- **Spec 前置**：PRD 先转成 Spec，再进入评审和技术方案。
+- **需求追踪**：通过 `03-requirement-trace.md` 串联 PRD、Spec、方案、任务、代码和单测。
+- **审查关卡**：内置 Spec 审查、方案审查和交付审查。
+- **单测闭环**：支持单测计划、单测报告，以及 `SPEC-*` 反查测试覆盖。
+- **可观测交付**：维护检查点、事件日志和可观测面板。
+- **可恢复上下文**：适合长任务、上下文压缩、切换智能体或中断后继续。
+- **无 Python 兜底**：脚本是加速器；没有 Python 时，agent 仍可手动维护 Markdown / JSON 产物。
+- **插件分发**：可作为 Codex 插件安装和使用。
+
+## 产物目录
+
+完整流程会在项目中维护一个需求级目录：
+
+```text
+.sdd-delivery/<feature>/
 ├── 00-prd.md
 ├── 01-spec.md
 ├── 02-spec-review.md
@@ -157,6 +137,35 @@ python skills/sdd-delivery/scripts/validate_artifacts.py .sdd-delivery/login-rat
 └── events.jsonl
 ```
 
+## 无 Python 模式
+
+Python 不是使用前提。没有 Python 时，AI 应该继续执行同样流程，只是改为手动创建和更新 Markdown / JSON 文件。
+
+无 Python 模式下，agent 应完成：
+
+```text
+1. 创建 .sdd-delivery/<feature>/ 目录
+2. 整理 PRD 到 00-prd.md
+3. 生成 01-spec.md
+4. 维护 03-requirement-trace.md
+5. 输出技术方案和审查结果
+6. 维护单测计划、单测报告和交付审查
+7. 更新 11-checkpoint.json 和 12-observability.md
+```
+
+## 可选自动化脚本
+
+脚本只用于加速，不是使用者必须执行的步骤。如果环境中有 Python，可以用以下脚本自动生成或校验产物：
+
+```bash
+python skills/sdd-delivery/scripts/init_artifacts.py login-rate-limit
+python skills/sdd-delivery/scripts/parse_prd_to_spec.py prd.md .sdd-delivery/login-rate-limit --force
+python skills/sdd-delivery/scripts/trace_coverage.py .sdd-delivery/login-rate-limit
+python skills/sdd-delivery/scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-report --update-trace
+python skills/sdd-delivery/scripts/sync_observability.py .sdd-delivery/login-rate-limit
+python skills/sdd-delivery/scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
+```
+
 ## 单测如何关联 Spec
 
 在测试文件中标注对应的 Spec ID：
@@ -167,29 +176,21 @@ def test_login_rate_limit_blocks_after_threshold():
     assert True
 ```
 
-然后运行：
+如果启用脚本，可以反查测试覆盖并回写追踪矩阵：
 
 ```bash
 python skills/sdd-delivery/scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-report --update-trace
 ```
 
-脚本会更新：
-
-```text
-03-requirement-trace.md
-09-unit-test-report.md
-11-checkpoint.json
-```
-
 ## GitHub 集成
 
-生成 PR 模板和 GitHub Actions 校验文件：
+可以生成 PR 模板和 GitHub Actions 校验文件：
 
 ```bash
 python skills/sdd-delivery/scripts/generate_github_assets.py .
 ```
 
-会生成：
+生成内容：
 
 ```text
 .github/pull_request_template.md
@@ -197,30 +198,23 @@ python skills/sdd-delivery/scripts/generate_github_assets.py .
 .github/scripts/validate_devflow_artifacts.py
 ```
 
-## 常用 AI 工具
-
-### Codex
+## 仓库结构
 
 ```text
-使用 sdd-delivery，基于这个 PRD 生成 Spec、技术方案、实现任务、单测计划和可观测交付产物。
-```
-
-### Claude Code
-
-```text
-请先阅读 skills/sdd-delivery/SKILL.md，并按照 SDD Delivery 流程处理这个 PRD。如果本地没有 Python，请手动创建和维护 Markdown / JSON 产物。
-```
-
-### Cursor
-
-```text
-请按照 skills/sdd-delivery/SKILL.md 中的流程，在 .sdd-delivery/<feature> 下创建交付产物，并维护需求追踪矩阵。
-```
-
-### GitHub Copilot Chat
-
-```text
-请基于 .sdd-delivery/<feature>/01-spec.md、03-requirement-trace.md、04-tech-solution.md 和 09-unit-test-report.md 审查这个 PR，优先输出风险和问题。
+sdd-delivery/
+├── .codex-plugin/
+│   └── plugin.json
+├── README.md
+├── assets/
+│   └── images/
+└── skills/
+    └── sdd-delivery/
+        ├── SKILL.md
+        ├── README.md
+        ├── agents/
+        ├── references/
+        ├── scripts/
+        └── assets/
 ```
 
 ## 维护说明
@@ -251,54 +245,45 @@ SDD Delivery 综合参考了以下公开实践：
 
 SDD Delivery is a Codex plugin for PRD-driven, Spec-first engineering delivery. It helps AI coding agents turn a PRD into a reviewed Spec, then continue through technical solution design, review gates, implementation tasks, coding, unit tests, delivery review, checkpoints, and observability.
 
-The goal is not to let an agent jump directly from PRD to code. The goal is to keep each delivery step reviewable, traceable, and recoverable.
+## Installation and Usage
 
-## Visual Overview
+### Install as a Codex plugin
 
-### Positioning
-
-![SDD Delivery Hero](assets/images/sdd-delivery-hero.png)
-
-### Workflow
-
-![SDD Delivery Workflow](assets/images/workflow-diagram.png)
+Install this repository as a Codex plugin:
 
 ```text
-PRD → Spec → Spec Review → Trace Matrix → Technical Solution → Solution Review → Implementation Tasks → Code → Unit Tests → Delivery Review → Checkpoint & Observability
+https://github.com/codepunk-gm/sdd-delivery-skill.git
 ```
 
-### Interaction
-
-![Friendly Guided Interaction](assets/images/interaction-demo.png)
-
-## Features
-
-- **Spec-first delivery**: normalize PRDs into reviewable Specs before solution design.
-- **Traceability**: connect PRD items, Spec items, solution sections, tasks, code, and tests.
-- **Review gates**: built-in Spec Review, Solution Review, and Delivery Review.
-- **Unit test loop**: maintain unit test plans, reports, and reverse `SPEC-*` coverage scans.
-- **Observable delivery**: keep checkpoints, events, and an observability dashboard.
-- **Context recovery**: resume long-running work after compaction, interruption, or agent handoff.
-- **No Python fallback**: scripts are accelerators; the workflow still works with manual Markdown / JSON updates.
-- **Plugin distribution**: packaged as a Codex plugin.
-
-## Installation
-
-Install this repository as a Codex plugin, then invoke:
+After installation, invoke:
 
 ```text
 Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation tasks, unit tests, and observable delivery artifacts.
 ```
 
-You can also copy the skill directly:
+### Install as a standalone skill
 
 ```bash
 cp -R skills/sdd-delivery ~/.codex/skills/sdd-delivery
 ```
 
-## Guided Interaction
+### Use with other AI coding tools
 
-When no phase is specified, the agent should start with:
+Ask the tool to read:
+
+```text
+skills/sdd-delivery/SKILL.md
+```
+
+Then prompt:
+
+```text
+Follow the SDD Delivery workflow for this PRD. Start with Spec, then review, technical solution, task breakdown, implementation, and unit tests. If Python is unavailable, maintain the Markdown / JSON artifacts manually.
+```
+
+## Normal Usage
+
+Users do not need to remember script commands. Start by sending a PRD or choosing a stage:
 
 ```text
 Choose an SDD Delivery stage:
@@ -311,14 +296,24 @@ Choose an SDD Delivery stage:
 7. Unit Test Plan / Report
 8. Trace / Coverage
 9. GitHub PR / CI Assets
-10. 检查点 / 交接
+10. Checkpoint / Handoff
 
 Send a PRD or reply with a number.
 ```
 
-## Quick Start
+## Features
 
-If Python is available, scripts can accelerate the workflow:
+- **Spec-first delivery**: normalize PRDs into reviewable Specs before solution design.
+- **Traceability**: connect PRD items, Spec items, solution sections, tasks, code, and tests.
+- **Review gates**: built-in Spec Review, Solution Review, and Delivery Review.
+- **Unit test loop**: maintain unit test plans, reports, and reverse `SPEC-*` coverage scans.
+- **Observable delivery**: keep checkpoints, events, and an observability dashboard.
+- **No Python fallback**: scripts are accelerators; the workflow still works with manual Markdown / JSON updates.
+- **Plugin distribution**: packaged as a Codex plugin.
+
+## Optional Automation
+
+If Python is available, scripts can speed up artifact creation and validation:
 
 ```bash
 python skills/sdd-delivery/scripts/init_artifacts.py login-rate-limit
@@ -331,9 +326,8 @@ python skills/sdd-delivery/scripts/validate_artifacts.py .sdd-delivery/login-rat
 
 ## No Python Mode
 
-If Python is unavailable, the agent should not fail. It should create and update the same Markdown / JSON artifacts manually and explain which automation steps were skipped.
+Python is not required. If Python is unavailable, the agent should create and update the same Markdown / JSON artifacts manually and explain which automation steps were skipped.
 
 ## License
 
 Choose a license before publishing. MIT is a common default for open-source developer tooling.
-
