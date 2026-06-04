@@ -1,4 +1,4 @@
-# SDD Delivery Skill
+﻿# SDD Delivery Skill
 
 [中文](#中文说明) | [English](#english)
 
@@ -26,7 +26,7 @@ PRD → Spec → Spec Review → Trace Matrix → Technical Solution → Solutio
 
 ### Friendly Guided Interaction
 
-![Friendly Guided Interaction](assets/images/interaction-demo.svg)
+![Friendly Guided Interaction](assets/images/interaction-demo.png)
 
 The skill is designed for guided interaction in Codex and other AI coding clients. Users can send a PRD, choose a number, use quick mode, or continue from a checkpoint.
 
@@ -378,6 +378,7 @@ This creates:
 ### License
 
 Choose a license before publishing. MIT is a common default for open-source tooling.
+
 
 
 

@@ -25,7 +25,7 @@ PRD → Spec → Spec Review → Trace Matrix → Technical Solution → Solutio
 
 ### Friendly Guided Interaction
 
-![Friendly Guided Interaction](assets/images/interaction-demo.svg)
+![Friendly Guided Interaction](assets/images/interaction-demo.png)
 
 The skill is designed for guided interaction in Codex and other AI coding clients. Users can send a PRD, choose a number, use quick mode, or continue from a checkpoint.
 
@@ -94,5 +94,6 @@ Python scripts are optional accelerators. If Python is unavailable, the agent sh
 ## Included Skill
 
 - `skills/sdd-delivery`: PRD-driven, Spec-first delivery workflow with traceability, tests, checkpoints, observability, and friendly guided interaction.
+
 
 
