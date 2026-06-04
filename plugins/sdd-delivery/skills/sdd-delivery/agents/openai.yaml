@@ -1,0 +1,8 @@
+﻿interface:
+  display_name: "SDD Delivery"
+  short_description: "Spec-first observable engineering workflow"
+  brand_color: "#1F6FEB"
+  default_prompt: "Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation tasks, unit tests, and observable delivery artifacts."
+
+policy:
+  allow_implicit_invocation: true

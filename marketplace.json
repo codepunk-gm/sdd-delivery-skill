@@ -8,7 +8,7 @@
       "name": "sdd-delivery",
       "source": {
         "source": "local",
-        "path": "."
+        "path": "./plugins/sdd-delivery"
       },
       "policy": {
         "installation": "AVAILABLE",
