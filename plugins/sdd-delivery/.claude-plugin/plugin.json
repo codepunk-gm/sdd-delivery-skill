@@ -1,0 +1,8 @@
+{
+  "name": "sdd-delivery",
+  "description": "Spec-driven delivery workflow for PRD-to-code engineering with traceability, tests, checkpoints, and observability.",
+  "version": "0.1.0",
+  "author": {
+    "name": "SDD Delivery contributors"
+  }
+}
