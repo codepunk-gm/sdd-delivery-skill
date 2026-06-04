@@ -5,15 +5,15 @@ from __future__ import annotations
 import argparse
 import json
 import re
-from datetime import datetime, timezone
 from pathlib import Path
+
+try:
+    from _utils import append_event, now, parse_markdown_table, write_json
+except ImportError:
+    from scripts._utils import append_event, now, parse_markdown_table, write_json
 
 SPEC_RE = re.compile(r"SPEC-\d+", re.I)
 TEST_EXTS = {".py", ".js", ".jsx", ".ts", ".tsx", ".go", ".rs", ".java", ".kt", ".cs", ".rb", ".php"}
-
-
-def now() -> str:
-    return datetime.now(timezone.utc).isoformat()
 
 
 def is_test_file(path: Path) -> bool:
@@ -46,30 +46,11 @@ def update_report(folder: Path, mapping: dict[str, list[str]]) -> None:
     report.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def parse_table(lines: list[str]) -> tuple[list[str], list[dict], list[str]]:
-    header: list[str] = []
-    rows: list[dict] = []
-    other: list[str] = []
-    for line in lines:
-        stripped = line.strip()
-        if not stripped.startswith("|"):
-            other.append(line)
-            continue
-        if "---" in stripped:
-            continue
-        cells = [c.strip() for c in stripped.strip("|").split("|")]
-        if not header:
-            header = cells
-        elif len(cells) == len(header):
-            rows.append(dict(zip(header, cells)))
-    return header, rows, other
-
-
 def update_trace(folder: Path, mapping: dict[str, list[str]]) -> None:
     trace = folder / "03-requirement-trace.md"
     if not trace.exists():
         return
-    header, rows, _ = parse_table(trace.read_text(encoding="utf-8-sig").splitlines())
+    header, rows = parse_markdown_table(trace.read_text(encoding="utf-8-sig").splitlines())
     if not header or not rows:
         return
     if "Unit Tests" not in header:
@@ -97,12 +78,7 @@ def update_checkpoint(folder: Path, mapping: dict[str, list[str]]) -> None:
     metrics["reverse_test_specs_found"] = len(mapping)
     metrics["trace_items_tested"] = len(mapping)
     data["updated_at"] = now()
-    checkpoint.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-
-
-def append_event(folder: Path, mapping: dict[str, list[str]]) -> None:
-    with (folder / "events.jsonl").open("a", encoding="utf-8") as f:
-        f.write(json.dumps({"time": now(), "event": "test_coverage_scanned", "detail": {"covered_specs": len(mapping)}}, ensure_ascii=False) + "\n")
+    write_json(checkpoint, data)
 
 
 def main() -> int:
@@ -123,7 +99,7 @@ def main() -> int:
     if args.update_trace:
         update_trace(folder, mapping)
     update_checkpoint(folder, mapping)
-    append_event(folder, mapping)
+    append_event(folder, "test_coverage_scanned", {"covered_specs": len(mapping)})
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

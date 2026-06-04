@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import argparse
 import json
-from datetime import datetime, timezone
 from pathlib import Path
 
-
-def now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+try:
+    from _utils import add_unique, append_event, load_json, now, write_json
+except ImportError:
+    from scripts._utils import add_unique, append_event, load_json, now, write_json
 
 
 def default_checkpoint(folder: Path) -> dict:
@@ -38,22 +38,10 @@ def checkpoint_path(folder: Path) -> Path:
     return folder / "11-checkpoint.json"
 
 
-def load_json(path: Path) -> dict:
-    if path.exists():
-        return json.loads(path.read_text(encoding="utf-8-sig"))
-    return default_checkpoint(path.parent)
-
-
-def add_unique(items: list, values: list[str]) -> None:
-    for value in values:
-        if value and value not in items:
-            items.append(value)
-
-
-def append_event(folder: Path, event: str, detail: dict) -> None:
-    payload = {"time": now(), "event": event, "detail": detail}
-    with (folder / "events.jsonl").open("a", encoding="utf-8") as f:
-        f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+def load_checkpoint_or_default(path: Path) -> dict:
+    """Load checkpoint JSON, falling back to a default template if missing."""
+    data = load_checkpoint_or_default(path)
+    return data if data else default_checkpoint(path.parent)
 
 
 def main() -> int:
@@ -76,7 +64,7 @@ def main() -> int:
     folder = Path(args.folder).resolve()
     folder.mkdir(parents=True, exist_ok=True)
     path = checkpoint_path(folder)
-    data = load_json(path)
+    data = load_checkpoint_or_default(path)
 
     if args.phase:
         data["current_phase"] = args.phase
@@ -125,7 +113,7 @@ def main() -> int:
             metrics["checks_failed"] = int(metrics.get("checks_failed", 0)) + 1
 
     data["updated_at"] = now()
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_json(path, data)
     append_event(folder, "checkpoint_updated", {"phase": data.get("current_phase"), "task": data.get("active_task"), "gates": gates, "next_action": data.get("next_action")})
     print(json.dumps({"checkpoint": str(path), "phase": data.get("current_phase"), "task": data.get("active_task"), "gates": gates}, ensure_ascii=False, indent=2))
     return 0

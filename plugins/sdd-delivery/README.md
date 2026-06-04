@@ -68,17 +68,11 @@ skills/sdd-delivery/SKILL.md
 推荐的启动交互：
 
 ```text
-请选择要执行的 SDD Delivery 阶段：
-1. PRD 转 Spec
-2. Spec 审查
-3. 技术方案
-4. 方案审查
-5. 实现任务拆分
-6. 代码实现
-7. 单测计划 / 单测报告
-8. 需求追踪 / 覆盖率检查
-9. GitHub PR / CI 资产
-10. 检查点 / 交接
+SDD Delivery 可执行以下阶段：
+
+1. PRD 转 Spec    2. 需求澄清      3. Spec 审查     4. 一致性分析
+5. 技术方案        6. 方案审查      7. 任务拆分      8. 代码实现
+9. 单测            10. 交付审查     11. 检查点 / 交接
 
 请发送 PRD，或回复编号继续。
 ```
@@ -299,17 +293,10 @@ Follow the SDD Delivery workflow for this PRD. Start with Spec, then review, tec
 Users do not need to remember script commands. Start by sending a PRD or choosing a stage:
 
 ```text
-Choose an SDD Delivery stage:
-1. PRD to Spec
-2. Spec Review
-3. Technical Solution
-4. Solution Review
-5. Implementation Tasks
-6. Code Implementation
-7. Unit Test Plan / Report
-8. Trace / Coverage
-9. GitHub PR / CI Assets
-10. Checkpoint / Handoff
+SDD Delivery stages:
+1. PRD to Spec   2. Clarify       3. Spec Review   4. Analyze
+5. Solution      6. Solution Rev  7. Task Split    8. Implement
+9. Unit Test     10. Delivery Rev 11. Checkpoint
 
 Send a PRD or reply with a number.
 ```

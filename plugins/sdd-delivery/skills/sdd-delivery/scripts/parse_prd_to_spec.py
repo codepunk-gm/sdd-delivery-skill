@@ -5,15 +5,15 @@ from __future__ import annotations
 import argparse
 import json
 import re
-from datetime import datetime, timezone
 from pathlib import Path
+
+try:
+    from _utils import append_event, now, write_json
+except ImportError:
+    from scripts._utils import append_event, now, write_json
 
 ITEM_RE = re.compile(r"^\s*(?:[-*]\s+|\d+[.)]\s+|#{2,}\s+)(.+?)\s*$")
 REQ_HINT_RE = re.compile(r"(must|should|shall|需要|必须|支持|允许|禁止|用户|系统|接口|页面|功能|验收|场景|when|given|then)", re.I)
-
-
-def now() -> str:
-    return datetime.now(timezone.utc).isoformat()
 
 
 def extract_items(text: str) -> list[str]:
@@ -34,11 +34,6 @@ def extract_items(text: str) -> list[str]:
     return items
 
 
-def write_event(folder: Path, event: str, detail: dict) -> None:
-    with (folder / "events.jsonl").open("a", encoding="utf-8") as f:
-        f.write(json.dumps({"time": now(), "event": event, "detail": detail}, ensure_ascii=False) + "\n")
-
-
 def update_checkpoint(folder: Path, prd_count: int, spec_count: int) -> None:
     path = folder / "11-checkpoint.json"
     if not path.exists():
@@ -50,7 +45,7 @@ def update_checkpoint(folder: Path, prd_count: int, spec_count: int) -> None:
     metrics["trace_items_total"] = spec_count
     data["current_phase"] = "spec-authoring"
     data["updated_at"] = now()
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_json(path, data)
 
 
 def main() -> int:
@@ -89,7 +84,7 @@ def main() -> int:
         trace_artifact.write_text("# Requirement Trace\n\n" + "\n".join(rows) + "\n", encoding="utf-8")
 
     update_checkpoint(folder, len(items), len(items))
-    write_event(folder, "prd_parsed_to_spec", {"source": str(prd_path), "items": len(items)})
+    append_event(folder, "prd_parsed_to_spec", {"source": str(prd_path), "items": len(items)})
     print(json.dumps({"prd_file": str(prd_path), "folder": str(folder), "items": len(items)}, ensure_ascii=False, indent=2))
     return 0
 

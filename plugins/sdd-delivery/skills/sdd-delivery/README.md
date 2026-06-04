@@ -35,20 +35,12 @@ Windows 可以复制到：
 使用 sdd-delivery，基于这个 PRD 生成 Spec、技术方案、审查清单、实现任务、单测计划和可观测交付产物。
 ```
 
-推荐启动菜单：
+启动后发送 PRD，或选择阶段：
 
 ```text
-请选择要执行的 SDD Delivery 阶段：
-1. PRD 转 Spec
-2. Spec 审查
-3. 技术方案
-4. 方案审查
-5. 实现任务拆分
-6. 代码实现
-7. 单测计划 / 单测报告
-8. 需求追踪 / 覆盖率检查
-9. GitHub PR / CI 资产
-10. 检查点 / 交接
+1. PRD 转 Spec    2. 需求澄清      3. Spec 审查     4. 一致性分析
+5. 技术方案        6. 方案审查      7. 任务拆分      8. 代码实现
+9. 单测            10. 交付审查     11. 检查点 / 交接
 
 请发送 PRD，或回复编号继续。
 ```
@@ -63,14 +55,17 @@ Windows 可以复制到：
 
 ## 核心能力
 
-- PRD 转 Spec
-- Spec 审查
-- 技术方案与方案审查
-- 需求追踪矩阵
-- 实现任务拆分
-- 单测计划和单测报告
-- 检查点与可观测面板
-- 无 Python 模式
+1. PRD 转 Spec — 将 PRD 解析为可审查的 Spec 和需求追踪矩阵
+2. 需求澄清 — 10 类歧义扫描，每轮最多 5 个问题
+3. Spec 审查 — 完整性、可测试性、边界检查
+4. 一致性分析 — 四遍交叉产物一致性检查
+5. 技术方案 — 基于 repo 证据的方案设计 + 事前验尸
+6. 方案审查 — 架构、兼容性、安全、性能、回滚审查
+7. 任务拆分 — 带边界标注的可追踪任务拆分
+8. 代码实现 — TDD 驱动、逐任务审查、实现日志
+9. 单测 — 单测计划 + 单测报告 + SPEC-* 反查覆盖
+10. 交付审查 — 边界验证、追踪覆盖、安全审计
+11. 检查点 / 交接 — 结构化状态保存，支持中断恢复
 
 ## 无 Python 模式
 
@@ -120,17 +115,10 @@ Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation 
 Recommended menu:
 
 ```text
-Choose an SDD Delivery stage:
-1. PRD to Spec
-2. Spec Review
-3. Technical Solution
-4. Solution Review
-5. Implementation Tasks
-6. Code Implementation
-7. Unit Test Plan / Report
-8. Trace / Coverage
-9. GitHub PR / CI Assets
-10. Checkpoint / Handoff
+SDD Delivery stages:
+1. PRD to Spec   2. Clarify       3. Spec Review   4. Analyze
+5. Solution      6. Solution Rev  7. Task Split    8. Implement
+9. Unit Test     10. Delivery Rev 11. Checkpoint
 
 Send a PRD or reply with a number.
 ```

@@ -235,7 +235,7 @@ Stop conditions:
 ## Reference loading
 
 - Read `references/constitution.md` at startup and when a principle override is requested.
-- Read `references/workflow.md` for the full 15-phase process, dependencies, and recovery flow.
+- Read `references/workflow.md` for the full 14-phase process, dependencies, and recovery flow.
 - Read `references/gates.md` before moving between phases.
 - Read `references/clarify-taxonomy.md` before Spec authoring (phase 3).
 - Read `references/analyze-rubric.md` after Spec Review (phase 4) and after Task Splitting (phase 9).

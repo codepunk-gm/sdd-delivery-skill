@@ -6,11 +6,24 @@ Required top-level fields:
 
 ```json
 {
-  "schema_version": "1.0",
+  "schema_version": "2.0",
   "feature": "",
   "goal": "",
   "current_phase": "",
   "active_task": "",
+  "gate_status": {
+    "clarify": "pending",
+    "spec": "pending",
+    "spec_review": "pending",
+    "analyze": "pending",
+    "solution": "pending",
+    "solution_review": "pending",
+    "tdd": "pending",
+    "per_task_review": "pending",
+    "unit_test_plan": "pending",
+    "test_report": "pending",
+    "delivery_review": "pending"
+  },
   "completed_tasks": [],
   "pending_tasks": [],
   "decisions": [],

@@ -4,33 +4,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
-from datetime import datetime, timezone
 from pathlib import Path
 
-
-def now() -> str:
-    return datetime.now(timezone.utc).isoformat()
-
-
-def parse_table(path: Path) -> list[dict]:
-    lines = path.read_text(encoding="utf-8-sig").splitlines()
-    rows = []
-    header = []
-    for line in lines:
-        if not line.strip().startswith("|") or "---" in line:
-            continue
-        cells = [c.strip() for c in line.strip().strip("|").split("|")]
-        if not header:
-            header = cells
-            continue
-        if len(cells) == len(header):
-            rows.append(dict(zip(header, cells)))
-    return rows
-
-
-def filled(value: str) -> bool:
-    return bool(value and value.strip() and value.strip().lower() not in {"tbd", "pending", "n/a", "-"})
+try:
+    from _utils import is_filled, now, parse_markdown_table_file, write_json
+except ImportError:
+    from scripts._utils import is_filled, now, parse_markdown_table_file, write_json
 
 
 def main() -> int:
@@ -41,12 +20,12 @@ def main() -> int:
 
     folder = Path(args.folder).resolve()
     trace = folder / "03-requirement-trace.md"
-    rows = parse_table(trace)
+    rows = parse_markdown_table_file(trace)
     total = len(rows)
-    solution = sum(1 for r in rows if filled(r.get("Solution Section", "")))
-    tasks = sum(1 for r in rows if filled(r.get("Task ID", "")))
-    code = sum(1 for r in rows if filled(r.get("Code Files", "")))
-    tests = sum(1 for r in rows if filled(r.get("Unit Tests", "")))
+    solution = sum(1 for r in rows if is_filled(r.get("Solution Section", "")))
+    tasks = sum(1 for r in rows if is_filled(r.get("Task ID", "")))
+    code = sum(1 for r in rows if is_filled(r.get("Code Files", "")))
+    tests = sum(1 for r in rows if is_filled(r.get("Unit Tests", "")))
     tested_status = sum(1 for r in rows if r.get("Status", "").strip().lower() == "tested")
     result = {
         "trace_items_total": total,
@@ -68,10 +47,10 @@ def main() -> int:
         metrics.update(result)
         metrics["trace_items_tested"] = tests
         data["updated_at"] = now()
-        checkpoint.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        write_json(checkpoint, data)
 
     out = folder / "trace-coverage.json"
-    out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    write_json(out, result)
     if not args.json:
         print("# Trace Coverage")
     print(json.dumps(result, ensure_ascii=False, indent=2))

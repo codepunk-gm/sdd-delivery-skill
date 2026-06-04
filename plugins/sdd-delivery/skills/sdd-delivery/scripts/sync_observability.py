@@ -4,18 +4,12 @@ from __future__ import annotations
 
 import argparse
 import json
-from datetime import datetime, timezone
 from pathlib import Path
 
-
-def now() -> str:
-    return datetime.now(timezone.utc).isoformat()
-
-
-def load_json(path: Path) -> dict:
-    if not path.exists():
-        return {}
-    return json.loads(path.read_text(encoding="utf-8-sig"))
+try:
+    from _utils import append_event, load_json, now
+except ImportError:
+    from scripts._utils import append_event, load_json, now
 
 
 def main() -> int:
@@ -39,7 +33,7 @@ def main() -> int:
         ("Active task", checkpoint.get("active_task", "")),
         ("Spec review gate", gates.get("spec_review", "pending")),
         ("Solution review gate", gates.get("solution_review", "pending")),
-        ("Unit test gate", gates.get("unit_test", "pending")),
+        ("Unit test gate", gates.get("unit_test_plan", "pending")),
         ("Delivery review gate", gates.get("delivery_review", "pending")),
         ("PRD items total", metrics.get("prd_items_total", 0)),
         ("Spec items total", metrics.get("spec_items_total", 0)),
@@ -64,8 +58,7 @@ def main() -> int:
     lines += [f"| {k} | {v} |" for k, v in rows]
     lines += ["", "## Gate History", "", "| Time | Gate | Status | Notes |", "|---|---|---|---|", "", "## Commands Run", "", "| Time | Command | Status | Summary |", "|---|---|---|---|", "", "## Events", "", "See `events.jsonl`."]
     (folder / "12-observability.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    with (folder / "events.jsonl").open("a", encoding="utf-8") as f:
-        f.write(json.dumps({"time": now(), "event": "observability_synced", "detail": {"metrics": len(rows)}}, ensure_ascii=False) + "\n")
+    append_event(folder, "observability_synced", {"metrics": len(rows)})
     print(json.dumps({"observability": str(folder / "12-observability.md"), "metrics": len(rows)}, ensure_ascii=False, indent=2))
     return 0
 

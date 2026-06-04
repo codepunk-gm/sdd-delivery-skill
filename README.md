@@ -49,10 +49,103 @@ SDD Delivery 是一个面向 AI 编程助手的 Spec-first 研发交付技能包
 ```
 
 启动后发送 PRD，或选择阶段：
+
 ```text
-1. PRD 转 Spec  2. 需求澄清  3. Spec 审查  4. 一致性分析
-5. 技术方案  6. 方案审查  7. 任务拆分  8. 代码实现  9. 单测
-10. 交付审查  11. 检查点 / 交接
+1. PRD 转 Spec    2. 需求澄清      3. Spec 审查     4. 一致性分析
+5. 技术方案        6. 方案审查      7. 任务拆分      8. 代码实现
+9. 单测            10. 交付审查     11. 检查点 / 交接
+```
+
+### 使用指南
+
+#### 启动工作流
+
+安装后，在 AI 编程助手中发送 PRD 即可启动。AI 会展示阶段菜单，你可以选择从哪个阶段开始：
+
+```text
+将这个 PRD 转为 Spec 和技术方案。
+```
+
+```text
+使用 sdd-delivery，审查已有的 Spec。
+```
+
+```text
+基于 .sdd-delivery/login-rate-limit 的 checkpoint 恢复上次进度。
+```
+
+#### 完整流程（14 阶段）
+
+```
+PRD 录入 → 需求澄清 → Spec 编写 → Spec 审查 → 一致性分析
+    ↓
+需求追踪矩阵 → 技术方案（含事前验尸） → 方案审查（含安全审计）
+    ↓
+任务拆分 → 代码实现（TDD + 逐任务审查） → 单测计划 → 单测报告
+    ↓
+交付审查（含安全审计） → 检查点 + 可观测面板
+```
+
+#### 轻量模式 vs 完整模式
+
+| 场景 | 模式 | 说明 |
+|------|------|------|
+| 错别字、配置值、文档字符串 | 轻量模式 | 跳过 1-4 号门，仅维护实现日志 |
+| 功能开发、Bug 修复、重构 | 完整模式 | 全部 11 个门 + 14 个产物 |
+
+轻量模式需用户明确请求（"使用轻量模式"）。完整模式为默认。
+
+#### 无 Python 模式
+
+Python 不是使用前提。所有自动化脚本都可以用 Markdown / JSON 手动编辑替代。没有 Python 时，AI 会说明哪些脚本被跳过，并直接创建产物文件。
+
+#### 产物目录
+
+产物保存在项目的 `.sdd-delivery/<feature>/` 下：
+
+```text
+.sdd-delivery/login-rate-limit/
+├── 00-prd.md                # PRD 文档（含需求澄清结果）
+├── 01-spec.md               # Spec 规格
+├── 02-spec-review.md        # Spec 审查
+├── 03-requirement-trace.md  # 需求追踪矩阵（含一致性分析）
+├── 04-tech-solution.md      # 技术方案（含事前验尸）
+├── 05-solution-review.md    # 方案审查（含安全审计）
+├── 06-implementation-tasks.md # 实现任务拆分
+├── 07-implementation-log.md # 实现日志
+├── 08-unit-test-plan.md     # 单测计划
+├── 09-unit-test-report.md   # 单测报告
+├── 10-delivery-review.md    # 交付审查（含安全审计）
+├── 11-checkpoint.json       # 检查点（可恢复状态）
+├── 12-observability.md      # 可观测面板
+└── events.jsonl             # 事件日志
+```
+
+#### 可选脚本加速
+
+有 Python 环境时，可以用脚本加速常见操作：
+
+```bash
+# 初始化产物目录
+python scripts/init_artifacts.py login-rate-limit
+
+# PRD 自动解析为 Spec
+python scripts/parse_prd_to_spec.py prd.md .sdd-delivery/login-rate-limit --force
+
+# 计算需求追踪覆盖率
+python scripts/trace_coverage.py .sdd-delivery/login-rate-limit
+
+# 反查测试覆盖
+python scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-report --update-trace
+
+# 同步可观测面板
+python scripts/sync_observability.py .sdd-delivery/login-rate-limit
+
+# 验证产物完整性
+python scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
+
+# 生成 GitHub PR 模板和 CI
+python scripts/generate_github_assets.py .
 ```
 
 ### 架构
@@ -129,6 +222,72 @@ SDD Delivery is a Spec-first engineering delivery skill for AI coding agents. It
 **Other AI tools (Cursor, Copilot, Windsurf, Continue):**
 Ask the tool to read `skills/sdd-delivery/SKILL.md`, then follow the workflow. All artifacts are plain Markdown/JSON — no tool-specific lock-in.
 
+After installation, send a PRD or choose a stage:
+
+```text
+SDD Delivery stages:
+1. PRD to Spec   2. Clarify       3. Spec Review   4. Analyze
+5. Solution      6. Solution Rev  7. Task Split    8. Implement
+9. Unit Test     10. Delivery Rev 11. Checkpoint
+
+Send a PRD or reply with a number.
+```
+
+### Usage Guide
+
+#### Starting a Workflow
+
+Send a PRD to your AI coding agent after installing the skill. The agent will present the stage menu. Examples:
+
+```text
+Turn this PRD into a Spec and technical solution.
+```
+
+```text
+Use sdd-delivery to review the existing Spec.
+```
+
+```text
+Resume from .sdd-delivery/login-rate-limit checkpoint.
+```
+
+#### Full Workflow (14 Phases)
+
+```
+PRD Intake → Clarify → Spec Authoring → Spec Review → Analyze
+    ↓
+Requirement Trace → Technical Solution (+Pre-Mortem) → Solution Review (+Security Audit)
+    ↓
+Implementation Tasks → Implementation (TDD + Per-Task Review) → Unit Test Plan → Test Report
+    ↓
+Delivery Review (+Security Audit) → Checkpoint + Observability
+```
+
+#### Quick Mode vs Full Mode
+
+| Scenario | Mode | Notes |
+|----------|------|-------|
+| Typos, config values, docstrings | Quick Mode | Bypasses gates 1-4, implementation log only |
+| Features, bug fixes, refactors | Full Mode | All 11 gates + 14 artifacts |
+
+Quick Mode must be explicitly requested. Full Mode is the default.
+
+#### No Python Mode
+
+Python is not required. All scripts have manual Markdown/JSON fallbacks. The agent will note which automation steps were skipped.
+
+#### Optional Scripts
+
+```bash
+python scripts/init_artifacts.py login-rate-limit
+python scripts/parse_prd_to_spec.py prd.md .sdd-delivery/login-rate-limit --force
+python scripts/trace_coverage.py .sdd-delivery/login-rate-limit
+python scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-report --update-trace
+python scripts/sync_observability.py .sdd-delivery/login-rate-limit
+python scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
+python scripts/generate_github_assets.py .
+```
+
 ### Architecture
 
 A progressive-disclosure design: `SKILL.md` is the trigger and table of contents (~280 lines). Detailed instructions live in 25 reference files loaded on-demand. Templates provide repeatable artifact scaffolding. Python scripts are optional accelerators.
@@ -136,7 +295,7 @@ A progressive-disclosure design: `SKILL.md` is the trigger and table of contents
 ### Key Features
 
 - **Constitution-governed** — 8 non-negotiable principles with conflict resolution
-- **15-phase workflow** — PRD Intake → Clarify → Spec → Review → Analyze → Trace → Solution → Solution Review → Tasks → Implementation → Unit Tests → Test Report → Delivery Review → Checkpoint
+- **14-phase workflow** — PRD Intake → Clarify → Spec Authoring → Spec Review → Analyze → Trace → Technical Solution → Solution Review → Implementation Tasks → Implementation → Unit Test Plan → Test Report → Delivery Review → Checkpoint + Observability
 - **11 mandatory gates** — Clarify, Spec, Spec Review, Analyze, Solution, Solution Review, TDD, Per-Task Review, Unit Test Plan, Test Report, Checkpoint
 - **Clarify taxonomy** — 10-category ambiguity scan, max 5 questions per session
 - **Boundary annotations** — `_Boundary:_` and `_Depends:_` with P0 enforcement
