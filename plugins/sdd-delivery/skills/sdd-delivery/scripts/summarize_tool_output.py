@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Summarize command or tool output for safer context loading."""
 from __future__ import annotations
 

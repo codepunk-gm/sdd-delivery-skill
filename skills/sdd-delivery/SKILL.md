@@ -8,13 +8,19 @@ description: Use for PRD-driven spec-first engineering delivery where Spec is ma
 SDD Delivery is a promotable team skill for PRD-driven, Spec-gated, observable engineering delivery.
 
 It combines:
+- constitution-governed, principle-first engineering
+- intelligent work routing (discovery and classification)
+- PRD clarification with taxonomy-driven ambiguity scanning
 - deterministic PRD parsing into Spec drafts
-- PRD normalization
 - mandatory Spec before PRD review
-- requirement traceability
-- technical solution design
-- solution review gates
-- bounded implementation
+- cross-artifact consistency analysis
+- requirement traceability with coverage thresholds
+- pre-mortem risk reasoning before design decisions
+- technical solution design with boundary annotations
+- solution review with security audit
+- bounded implementation with per-task review
+- TDD structural blocking (RED → GREEN → REFACTOR)
+- parallel task markers for independent work
 - unit test planning and execution
 - deterministic checkpoint recovery
 - observable delivery metrics
@@ -22,104 +28,185 @@ It combines:
 - reverse test-to-Spec coverage scanning
 - GitHub PR template and CI artifact validation assets
 
+## Constitution
+
+Before any action, load `references/constitution.md`. The constitution defines 8 non-negotiable principles ranked by precedence:
+
+1. Spec Before Code
+2. Artifacts Over Chat
+3. Gates Before Progress
+4. Traceability Forever
+5. Minimal, Reviewable Diffs
+6. UTF-8 Always
+7. No-Python Universality
+8. Evidence Over Assertion
+
+When principles conflict, state the conflict explicitly, propose a scope-limited override, and ask for user confirmation. Never override a principle silently.
+
 ## Startup behavior
 
-When this skill is loaded for a new workflow and the user has not selected a specific phase, show the capability menu from 
-references/capability-menu.md in concise form. Ask the user to send a PRD or choose a number.
+When this skill is loaded for a new workflow and the user has not selected a specific phase, show the capability menu from `references/capability-menu.md` in concise form. Ask the user to send a PRD or choose a number.
 
-If Python is unavailable, do not fail. Use No Python Mode from 
-references/ai-tool-usage.md: create and update Markdown/JSON artifacts manually, then explain which script-backed automation was skipped.
+If Python is unavailable, do not fail. Use No Python Mode from `references/ai-tool-usage.md`: create and update Markdown/JSON artifacts manually, then explain which script-backed automation was skipped.
+
+## Discovery (Brownfield Routing)
+
+Before planning in an existing repo, run a Discovery scan:
+
+1. Check if `.sdd-delivery/` already exists — if so, offer recovery mode (resume from latest checkpoint).
+2. Read `references/brownfield-change.md` for existing-project rules.
+3. Inspect existing architecture (package structure, key interfaces, test patterns) before proposing changes.
+4. Classify the work into one of five paths:
+
+| Path | When Used | Output |
+|------|-----------|--------|
+| Extend existing spec | Adding to a previously approved spec | Updated spec |
+| Create one new spec | Greenfield feature with clear boundaries | New spec |
+| Decompose into multiple specs | Large request crossing module boundaries | Multiple specs + roadmap |
+| Implement directly | Trivial/safe change (typo, config, doc) | Direct implementation |
+| Mixed decomposition | Combination of extending and new specs | Mixed |
+
+5. Record repo facts with sources (file path + line number). Do not treat stale facts as durable memory.
 
 ## When to use
 
 Use this skill for non-trivial team engineering work that starts from a PRD or requirement and needs design, review, code, and unit tests.
 
-Use quick mode only for tiny safe edits. For feature work, bug fixes with behavior impact, refactors, interface changes, or multi-file changes, use full DevFlow mode.
+Use quick mode only for tiny safe edits (typos, config values, docstrings). For feature work, bug fixes with behavior impact, refactors, interface changes, or multi-file changes, use full DevFlow mode.
+
+Quick mode bypasses gates 1-4. The user must explicitly request it.
 
 ## Mandatory gates
 
 Do not skip these gates unless the user explicitly overrides them:
 
-1. PRD must be converted into Spec before PRD review.
-2. Spec Review must pass or record open issues before technical solution.
-3. Technical Solution must exist before implementation tasks.
-4. Solution Review must pass or record accepted risks before coding.
-5. Unit Test Plan must exist before declaring implementation complete.
-6. Unit Test Report or documented verification gap is required before delivery.
-7. Checkpoint and observability must be updated before stopping, compaction, or handoff.
+1. **Clarify Gate** — No unresolved P0/P1 ambiguities before Spec authoring (or user accepts).
+2. **Spec Gate** — PRD must be converted into Spec before PRD review.
+3. **Spec Review Gate** — Spec Review must pass or record open issues before technical solution.
+4. **Analyze Gate** — Cross-artifact consistency must be confirmed or gaps accepted before technical solution.
+5. **Solution Gate** — Technical Solution must exist before implementation tasks.
+6. **Solution Review Gate** — Solution Review must pass or record accepted risks before coding.
+7. **TDD Gate** — Tests must be written and failing (RED) before implementation code is written (GREEN).
+8. **Per-Task Review Gate** — Each completed task must be reviewed before the next task begins.
+9. **Unit Test Gate** — Unit Test Plan must exist before declaring implementation complete.
+10. **Test Report Gate** — Unit Test Report or documented verification gap is required before delivery.
+11. **Checkpoint Gate** — Checkpoint and observability must be updated before stopping, compaction, or handoff.
+
+See `references/gates.md` for the gate state machine and blocked-gate protocol.
 
 ## Non-negotiable rules
 
 - Follow project instructions and architecture.
-- Read and write code files as UTF-8.
-- Do not turn Chinese text into mojibake.
+- Read and write code files as UTF-8. Do not turn Chinese text into mojibake.
 - Prefer artifacts over chat memory.
 - Load only the context needed for the current phase.
-- Every repo fact must have a source.
-- Every implementation task should trace back to Spec items.
-- Every unit test should trace back to Spec acceptance criteria when possible.
-- Do not modify unrelated files.
+- Every repo fact must have a source (file path + line number).
+- Every implementation task must trace back to Spec items and include `_Boundary:_` annotation.
+- Every unit test must trace back to Spec acceptance criteria when possible.
+- Every task that depends on another must include `_Depends:_` annotation.
+- Do not modify unrelated files. Boundary violations are P0 rejections.
 - Do not treat stale code facts as durable memory.
+- No single task may exceed 200 lines of change (L size) without explicit justification.
+- Parallel tasks must be marked with `[P]` prefix. Independent tasks should be parallelized.
+- Tests must be written BEFORE implementation code (RED → GREEN → REFACTOR).
 
 ## Full workflow
 
-1. PRD Intake
-   - Save or summarize the PRD in `00-prd.md`.
-   - Identify requirement items and unknowns.
+### 1. PRD Intake
+- Save or summarize the PRD in `00-prd.md`.
+- Identify requirement items, unknowns, and constraints.
+- Refs: `references/capability-menu.md`
 
-2. Spec Authoring
-   - Convert PRD into `01-spec.md`.
-   - Spec is the reviewable contract for PRD quality.
+### 2. Clarify
+- Run taxonomy scan against PRD items using `references/clarify-taxonomy.md`.
+- Present at most 5 prioritized questions per session.
+- Record resolutions in `00-prd.md` under `## Clarify Scan`.
+- **Gate:** No unresolved P0/P1 ambiguities before proceeding.
 
-3. Spec Review
-   - Review clarity, completeness, acceptance criteria, boundaries, and testability in `02-spec-review.md`.
-   - Do not continue when P0/P1 review blockers are unresolved unless the user accepts the risk.
+### 3. Spec Authoring
+- Convert PRD into `01-spec.md`.
+- Include acceptance criteria for every Spec item.
+- Mark `_Depends:_` for Spec items blocked on decisions.
+- Spec is the reviewable contract for PRD quality.
 
-4. Requirement Trace
-   - Maintain `03-requirement-trace.md` mapping PRD items to Spec items, solution sections, tasks, code, and unit tests.
+### 4. Spec Review
+- Review clarity, completeness, acceptance criteria, boundaries, and testability in `02-spec-review.md`.
+- Refs: `references/review-rubric.md`
+- **Gate:** Do not continue when P0/P1 review blockers are unresolved unless the user accepts the risk.
 
-5. Technical Solution
-   - Write `04-tech-solution.md` with repo-grounded design and verification strategy.
+### 5. Analyze (Cross-Artifact Consistency)
+- Run four detection passes using `references/analyze-rubric.md`:
+  1. Duplications (same requirement in two places)
+  2. Ambiguities (vague language without concrete criteria)
+  3. Underspecified items (dangling references, missing file paths)
+  4. Constitution conflicts (violations of non-negotiable principles)
+- Record findings in `03-requirement-trace.md` under `## Analysis`.
+- **Gate:** No P0 findings before proceeding.
 
-6. Solution Review
-   - Review architecture, compatibility, security, performance, scope, and testability in `05-solution-review.md`.
+### 6. Requirement Trace
+- Maintain `03-requirement-trace.md` mapping PRD items to Spec items, solution sections, tasks, code, and unit tests.
+- Refs: `references/traceability.md`
 
-7. Implementation Tasks
-   - Write `06-implementation-tasks.md` with bounded, verifiable tasks.
+### 7. Technical Solution
+- Run pre-mortem using `references/pre-mortem.md`: "Assume this solution failed. Why?"
+- Write `04-tech-solution.md` with repo-grounded design and verification strategy.
+- Record pre-mortem findings in the solution under `## Pre-Mortem`.
 
-8. Implementation
-   - Work one task at a time.
-   - Maintain `07-implementation-log.md`.
-   - Update checkpoint after meaningful changes.
+### 8. Solution Review
+- Review architecture, compatibility, security, performance, scope, and testability in `05-solution-review.md`.
+- Run security audit using `references/security-audit.md`.
+- Refs: `references/review-rubric.md`, `references/security-audit.md`
+- **Gate:** CRITICAL and HIGH security findings must be resolved or accepted.
 
-9. Unit Test Plan
-   - Write `08-unit-test-plan.md` before completion.
-   - Map test cases to Spec acceptance criteria.
+### 9. Implementation Tasks
+- Read `references/boundary-rules.md`, `references/task-splitting.md`, `references/estimation.md`.
+- Write `06-implementation-tasks.md` with bounded, verifiable tasks.
+- Every task must include `_Boundary:_` and estimation size (XS-XL).
+- Mark independent tasks with `[P]`. Split any XL task.
+- **Gate:** No XL tasks. All tasks must have boundary annotations.
 
-10. Unit Test Report
-    - Record commands, status, failures, and coverage gaps in `09-unit-test-report.md`.
+### 10. Implementation
+- Work one task at a time. Write tests FIRST (RED), confirm failure, then implement (GREEN).
+- Maintain `07-implementation-log.md`. Update checkpoint after meaningful changes.
+- **Per-task review:** After each task, verify boundaries, tests, and scope before starting the next.
+- **Gate:** Boundary violations are P0 rejection. Test-before-code order is enforced.
 
-11. Delivery Review
-    - Final review in `10-delivery-review.md`, findings first.
+### 11. Unit Test Plan
+- Write `08-unit-test-plan.md` before completion.
+- Map test cases to Spec acceptance criteria. Document TDD order.
+- Refs: `references/unit-test-policy.md`
+- **Gate:** Plan must exist before declaring implementation complete.
 
-12. Checkpoint and Observability
-    - Update `11-checkpoint.json`, `12-observability.md`, and `events.jsonl` before stop, compact, or handoff.
+### 12. Unit Test Report
+- Record commands, status, failures, and coverage gaps in `09-unit-test-report.md`.
+- Run `python scripts/scan_test_coverage.py . .sdd-delivery/<feature> --update-report --update-trace` if available.
+- **Gate:** Report or documented verification gap required before delivery.
+
+### 13. Delivery Review
+- Final review in `10-delivery-review.md`, findings first.
+- Run security audit again for implemented changes.
+- Verify all task boundaries were respected (cross-reference changed files).
+- Refs: `references/review-rubric.md`
+
+### 14. Checkpoint and Observability
+- Update `11-checkpoint.json`, `12-observability.md`, and `events.jsonl` before stop, compact, or handoff.
+- Refs: `references/context-policy.md`, `references/checkpoint-schema.md`
 
 ## Required artifacts
 
 ```text
 .sdd-delivery/<feature>/
-├── 00-prd.md
+├── 00-prd.md              (includes ## Clarify Scan)
 ├── 01-spec.md
 ├── 02-spec-review.md
-├── 03-requirement-trace.md
-├── 04-tech-solution.md
-├── 05-solution-review.md
+├── 03-requirement-trace.md (includes ## Analysis)
+├── 04-tech-solution.md    (includes ## Pre-Mortem)
+├── 05-solution-review.md  (includes ## Security Audit)
 ├── 06-implementation-tasks.md
 ├── 07-implementation-log.md
 ├── 08-unit-test-plan.md
 ├── 09-unit-test-report.md
-├── 10-delivery-review.md
+├── 10-delivery-review.md  (includes ## Security Audit)
 ├── 11-checkpoint.json
 ├── 12-observability.md
 └── events.jsonl
@@ -138,6 +225,8 @@ Active task:
 Spec items:
 In scope:
 Out of scope:
+Boundary:
+Depends on:
 Relevant files:
 Verification:
 Stop conditions:
@@ -145,18 +234,26 @@ Stop conditions:
 
 ## Reference loading
 
-- Read `references/workflow.md` for the full process.
+- Read `references/constitution.md` at startup and when a principle override is requested.
+- Read `references/workflow.md` for the full 15-phase process, dependencies, and recovery flow.
 - Read `references/gates.md` before moving between phases.
+- Read `references/clarify-taxonomy.md` before Spec authoring (phase 3).
+- Read `references/analyze-rubric.md` after Spec Review (phase 4) and after Task Splitting (phase 9).
 - Read `references/traceability.md` when updating requirement mapping.
-- Read `references/context-policy.md` before broad repo exploration, compaction, or recovery.
+- Read `references/pre-mortem.md` before Technical Solution (phase 7) and before Implementation (phase 10).
 - Read `references/review-rubric.md` before Spec Review, Solution Review, or Delivery Review.
+- Read `references/boundary-rules.md` before Implementation Tasks (phase 9).
+- Read `references/task-splitting.md` before Implementation Tasks (phase 9).
+- Read `references/estimation.md` before Implementation Tasks (phase 9).
 - Read `references/unit-test-policy.md` before unit test planning.
+- Read `references/security-audit.md` before Solution Review (phase 8) and Delivery Review (phase 13).
+- Read `references/context-policy.md` before broad repo exploration, compaction, or recovery.
 - Read `references/team-rules.md` for organization-specific conventions.
 - Read `references/capability-menu.md` when starting a new workflow.
-- Read `references/interaction-model.md` for guided, friendly, Codex-client-oriented interaction.
-- Read `references/ai-tool-usage.md` when the user asks about Codex, Claude Code, Cursor, Copilot, Windsurf, Continue, plugin install, or no-Python usage.
+- Read `references/interaction-model.md` for guided interaction and recovery mode.
+- Read `references/ai-tool-usage.md` for multi-tool and No-Python guidance.
 - Read `references/plugin-operations.md` when publishing, installing, updating, or troubleshooting the plugin.
-- Read `references/open-source-influences.md` when explaining design references or open-source inspiration.
+- Read `references/open-source-influences.md` when explaining design references.
 - Read `references/automation.md` before using bundled automation scripts.
 - Read `references/github-integration.md` before generating GitHub PR/CI assets.
 
@@ -180,19 +277,14 @@ python scripts/summarize_tool_output.py output.log --type test
 
 For substantial work, report:
 - current phase
+- clarify status (if applicable)
+- analysis status (if applicable)
+- pre-mortem recorded (y/n)
 - artifacts updated
 - gates passed or open blockers
+- boundary annotations complete (y/n)
+- per-task review status
 - implementation status
-- unit test status
+- unit test status (RED/GREEN/REFACTOR phase)
 - observability/checkpoint status
 - next action
-
-
-
-
-
-
-
-
-
-

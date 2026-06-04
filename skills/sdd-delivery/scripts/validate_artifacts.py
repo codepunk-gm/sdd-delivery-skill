@@ -43,7 +43,19 @@ REQUIRED_CHECKPOINT_FIELDS = [
     "updated_at",
 ]
 
-REQUIRED_GATES = ["spec_review", "solution_review", "unit_test", "delivery_review"]
+REQUIRED_GATES = [
+    "clarify",
+    "spec",
+    "spec_review",
+    "analyze",
+    "solution",
+    "solution_review",
+    "tdd",
+    "per_task_review",
+    "unit_test_plan",
+    "test_report",
+    "delivery_review",
+]
 
 
 def non_empty(path: Path) -> bool:

@@ -1,6 +1,6 @@
 ﻿# Checkpoint Schema
 
-Use `04-checkpoint.json` as the source of truth for recovery.
+Use `11-checkpoint.json` as the source of truth for recovery.
 
 Required top-level fields:
 

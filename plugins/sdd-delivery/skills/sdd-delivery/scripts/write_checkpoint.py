@@ -19,7 +19,7 @@ def default_checkpoint(folder: Path) -> dict:
         "goal": "",
         "current_phase": "",
         "active_task": "",
-        "gate_status": {"spec_review": "pending", "solution_review": "pending", "unit_test": "pending", "delivery_review": "pending"},
+        "gate_status": {"clarify": "pending", "spec": "pending", "spec_review": "pending", "analyze": "pending", "solution": "pending", "solution_review": "pending", "tdd": "pending", "per_task_review": "pending", "unit_test_plan": "pending", "test_report": "pending", "delivery_review": "pending"},
         "completed_tasks": [],
         "pending_tasks": [],
         "decisions": [],

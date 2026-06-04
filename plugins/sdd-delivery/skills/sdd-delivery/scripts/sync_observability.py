@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Sync 12-observability.md from checkpoint and coverage artifacts."""
 from __future__ import annotations
 
