@@ -91,6 +91,46 @@ skills/sdd-delivery/SKILL.md
 2. 完整流程：Spec、审查、需求追踪、单测、检查点
 ```
 
+## 安装排查：路径和转义
+
+在 Windows 或部分聊天界面里，路径里的反斜杠可能被渲染或转义。例如真实路径：
+
+```text
+C:\Users\VectorShi\.claude\plugins\marketplaces
+```
+
+在某些输出里可能看起来像：
+
+```text
+C:\Users\VectorShi.claude\plugins\marketplaces
+```
+
+这不一定代表路径真的错了，可能只是 `\.` 被界面当作转义显示。
+
+如果 GitHub shorthand 安装失败：
+
+```text
+/plugin marketplace add codepunk-gm/sdd-delivery-skill
+```
+
+可以改用完整 GitHub URL：
+
+```text
+/plugin marketplace add https://github.com/codepunk-gm/sdd-delivery-skill.git
+```
+
+如果仍然失败，可以先 clone 到本地，再用本地路径添加 marketplace。Windows 路径建议使用引号和正斜杠，避免反斜杠转义问题：
+
+```text
+/plugin marketplace add "C:/Users/your-name/path/to/sdd-delivery-skill"
+/plugin install sdd-delivery
+```
+
+也可以先确认本地目录确实存在 marketplace 文件：
+
+```powershell
+Test-Path C:\path\to\sdd-delivery-skill\marketplace.json
+```
 ## 视觉概览
 
 ### 项目定位
@@ -314,6 +354,46 @@ Choose an SDD Delivery stage:
 Send a PRD or reply with a number.
 ```
 
+## Troubleshooting: Paths and Escaping
+
+On Windows or in some chat renderers, backslashes may be rendered as escape characters. For example, the real path:
+
+```text
+C:\Users\VectorShi\.claude\plugins\marketplaces
+```
+
+may appear as:
+
+```text
+C:\Users\VectorShi.claude\plugins\marketplaces
+```
+
+That does not always mean the path is wrong; the `\.` sequence may have been rendered as an escaped dot.
+
+If GitHub shorthand fails:
+
+```text
+/plugin marketplace add codepunk-gm/sdd-delivery-skill
+```
+
+try the full GitHub URL:
+
+```text
+/plugin marketplace add https://github.com/codepunk-gm/sdd-delivery-skill.git
+```
+
+If that still fails, clone the repository locally and add the local marketplace path. On Windows, prefer quotes and forward slashes to avoid backslash escaping issues:
+
+```text
+/plugin marketplace add "C:/Users/your-name/path/to/sdd-delivery-skill"
+/plugin install sdd-delivery
+```
+
+You can verify the local marketplace file first:
+
+```powershell
+Test-Path C:\path\to\sdd-delivery-skill\marketplace.json
+```
 ## Features
 
 - **Spec-first delivery**: normalize PRDs into reviewable Specs before solution design.
@@ -360,6 +440,7 @@ These projects and practices are design references, not copied implementations. 
 ## License
 
 Choose a license before publishing. MIT is a common default for open-source developer tooling.
+
 
 
 

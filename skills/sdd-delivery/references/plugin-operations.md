@@ -119,3 +119,22 @@ python skills/sdd-delivery/scripts/generate_github_assets.py .
 
 This copies the validator to `.github/scripts/validate_devflow_artifacts.py`.
 
+
+## Path and escaping notes
+
+If `/plugin marketplace add codepunk-gm/sdd-delivery-skill` reports that `marketplace.json` is missing, first verify whether the issue is a local cache or path escaping problem.
+
+Recommended fallbacks:
+
+```text
+/plugin marketplace add https://github.com/codepunk-gm/sdd-delivery-skill.git
+```
+
+Or clone locally and use a quoted path with forward slashes on Windows:
+
+```text
+/plugin marketplace add "C:/Users/your-name/path/to/sdd-delivery-skill"
+/plugin install sdd-delivery
+```
+
+Some renderers may display `C:\Users\Name\.claude` as `C:\Users\Name.claude` because `\.` is treated as an escaped dot. Check the real path from the terminal before assuming the plugin cache path is wrong.
