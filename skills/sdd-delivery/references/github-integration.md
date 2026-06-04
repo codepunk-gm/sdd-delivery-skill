@@ -1,4 +1,4 @@
-﻿# GitHub Integration
+# GitHub Integration
 
 The skill can generate repository assets for GitHub-based delivery.
 
@@ -8,7 +8,7 @@ The skill can generate repository assets for GitHub-based delivery.
 
 ## CI workflow
 
-`generate_github_assets.py` creates `.github/workflows/sdd-delivery-artifacts.yml` to validate `.op/devflow/*` folders on pull requests.
+`generate_github_assets.py` creates `.github/workflows/sdd-delivery-artifacts.yml` to validate `.sdd-delivery/*` folders on pull requests.
 
 ## Review comment workflow
 

@@ -1,4 +1,4 @@
-﻿# Plugin Operations Guide
+# Plugin Operations Guide
 
 This guide explains how to publish, install, update, and maintain the SDD Delivery plugin.
 
@@ -86,7 +86,7 @@ Use semantic versioning:
 Keep these stable:
 
 - skill name: `sdd-delivery`
-- artifact folder: `.op/devflow/<feature>/`
+- artifact folder: `.sdd-delivery/<feature>/`
 - core artifacts: `00-prd.md` through `12-observability.md`
 - checkpoint schema fields whenever possible
 

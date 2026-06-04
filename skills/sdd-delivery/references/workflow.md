@@ -1,6 +1,6 @@
 # Workflow
 
-OP DevFlow is a PRD-driven delivery workflow with Spec as the mandatory contract before PRD review.
+SDD Delivery is a PRD-driven delivery workflow with Spec as the mandatory contract before PRD review.
 
 ## Phases
 

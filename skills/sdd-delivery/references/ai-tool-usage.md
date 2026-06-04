@@ -1,4 +1,4 @@
-﻿# AI Tool Usage Guide
+# AI Tool Usage Guide
 
 SDD Delivery is designed to work across AI coding tools. The skill is strongest in Codex because it can be packaged as a Codex skill/plugin, but the workflow artifacts are plain Markdown and JSON, so other tools can use them too.
 
@@ -43,7 +43,7 @@ Claude Code does not need the scripts to understand the workflow. Scripts are op
 Add `SKILL.md` or the relevant references to Cursor context, then prompt:
 
 ```text
-Follow the SDD Delivery workflow in SKILL.md. Create .op/devflow/<feature> artifacts and maintain the requirement trace matrix.
+Follow the SDD Delivery workflow in SKILL.md. Create .sdd-delivery/<feature> artifacts and maintain the requirement trace matrix.
 ```
 
 Recommended Cursor usage:
@@ -55,13 +55,13 @@ Recommended Cursor usage:
 Use the repository artifacts directly:
 
 ```text
-Follow the SDD Delivery workflow. Use .op/devflow/<feature>/01-spec.md as the source of truth and update 03-requirement-trace.md when implementation or tests change.
+Follow the SDD Delivery workflow. Use .sdd-delivery/<feature>/01-spec.md as the source of truth and update 03-requirement-trace.md when implementation or tests change.
 ```
 
 For PR review:
 
 ```text
-Review this PR against .op/devflow/<feature>/01-spec.md, 03-requirement-trace.md, 04-tech-solution.md, and 09-unit-test-report.md. Findings first.
+Review this PR against .sdd-delivery/<feature>/01-spec.md, 03-requirement-trace.md, 04-tech-solution.md, and 09-unit-test-report.md. Findings first.
 ```
 
 ## Windsurf / Continue / Other Agents
@@ -69,14 +69,14 @@ Review this PR against .op/devflow/<feature>/01-spec.md, 03-requirement-trace.md
 Use the plain artifact workflow:
 
 ```text
-Read sdd-delivery-skill/SKILL.md. If scripts are unavailable, manually create the required .op/devflow/<feature> artifacts from the templates and update them as you work.
+Read sdd-delivery-skill/SKILL.md. If scripts are unavailable, manually create the required .sdd-delivery/<feature> artifacts from the templates and update them as you work.
 ```
 
 ## No Python Mode
 
 If Python is unavailable, do not fail. The agent should perform the same workflow using Markdown/JSON editing:
 
-1. Create `.op/devflow/<feature>/`.
+1. Create `.sdd-delivery/<feature>/`.
 2. Copy or recreate the artifact templates.
 3. Parse PRD manually into `00-prd.md` and `01-spec.md`.
 4. Maintain `03-requirement-trace.md` manually.

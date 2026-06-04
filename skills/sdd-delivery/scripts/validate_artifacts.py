@@ -1,5 +1,5 @@
-﻿#!/usr/bin/env python3
-"""Validate OP DevFlow v2 artifact completeness and gate readiness."""
+#!/usr/bin/env python3
+"""Validate SDD Delivery v2 artifact completeness and gate readiness."""
 from __future__ import annotations
 
 import argparse
@@ -51,7 +51,7 @@ def non_empty(path: Path) -> bool:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate OP DevFlow v2 artifacts.")
+    parser = argparse.ArgumentParser(description="Validate SDD Delivery v2 artifacts.")
     parser.add_argument("folder", help="Feature artifact folder")
     parser.add_argument("--strict", action="store_true", help="Fail if gates are not passed")
     args = parser.parse_args()

@@ -1,5 +1,5 @@
-﻿#!/usr/bin/env python3
-"""Update OP DevFlow v2 checkpoint and event log."""
+#!/usr/bin/env python3
+"""Update SDD Delivery v2 checkpoint and event log."""
 from __future__ import annotations
 
 import argparse
@@ -57,7 +57,7 @@ def append_event(folder: Path, event: str, detail: dict) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Update OP DevFlow v2 checkpoint.")
+    parser = argparse.ArgumentParser(description="Update SDD Delivery v2 checkpoint.")
     parser.add_argument("folder", help="Feature artifact folder")
     parser.add_argument("--phase")
     parser.add_argument("--task")

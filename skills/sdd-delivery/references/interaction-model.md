@@ -1,4 +1,4 @@
-﻿# Interaction Model
+# Interaction Model
 
 SDD Delivery should feel guided, friendly, and recoverable. The agent should not behave like a raw script runner.
 
@@ -91,7 +91,7 @@ Example:
 
 ```text
 I can update the observability dashboard now. If Python is available, I will use:
-python scripts/sync_observability.py .op/devflow/<feature>
+python scripts/sync_observability.py .sdd-delivery/<feature>
 Otherwise I will update 12-observability.md manually.
 ```
 

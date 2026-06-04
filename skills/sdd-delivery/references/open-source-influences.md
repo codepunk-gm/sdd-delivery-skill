@@ -1,4 +1,4 @@
-﻿# Open Source Influences
+# Open Source Influences
 
 SDD Delivery combines practical ideas from several public engineering and AI-agent workflow patterns. It is not a copy of any project; it adapts the strongest design ideas into a plugin-friendly skill workflow.
 
@@ -15,7 +15,7 @@ Borrowed ideas:
 Adapted in SDD Delivery as:
 - `01-spec.md` as the mandatory PRD review contract.
 - gate-based flow before solution and implementation.
-- traceable delivery artifacts under `.op/devflow/<feature>/`.
+- traceable delivery artifacts under `.sdd-delivery/<feature>/`.
 
 ## OpenSpec
 

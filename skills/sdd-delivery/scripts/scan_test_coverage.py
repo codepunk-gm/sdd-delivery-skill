@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Scan test files for Spec IDs and optionally update trace/report artifacts."""
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ def is_test_file(path: Path) -> bool:
 def scan(root: Path) -> dict[str, list[str]]:
     mapping: dict[str, list[str]] = {}
     for path in root.rglob("*"):
-        if ".git" in path.parts or ".op" in path.parts or ".github" in path.parts:
+        if ".git" in path.parts or ".sdd-delivery" in path.parts or ".github" in path.parts:
             continue
         if not path.is_file() or not is_test_file(path):
             continue

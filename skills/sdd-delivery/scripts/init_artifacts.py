@@ -1,5 +1,5 @@
-﻿#!/usr/bin/env python3
-"""Initialize OP DevFlow v2 observable artifacts for a feature."""
+#!/usr/bin/env python3
+"""Initialize SDD Delivery v2 observable artifacts for a feature."""
 from __future__ import annotations
 
 import argparse
@@ -55,7 +55,7 @@ def append_event(folder: Path, event: str, detail: dict) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Initialize OP DevFlow v2 artifacts.")
+    parser = argparse.ArgumentParser(description="Initialize SDD Delivery v2 artifacts.")
     parser.add_argument("feature", help="Feature name, for example add-login-rate-limit")
     parser.add_argument("--root", default=".", help="Project root. Defaults to current directory.")
     parser.add_argument("--force", action="store_true", help="Overwrite existing artifacts.")
@@ -63,7 +63,7 @@ def main() -> int:
 
     feature = safe_feature(args.feature)
     project_root = Path(args.root).resolve()
-    folder = project_root / ".op" / "devflow" / feature
+    folder = project_root / ".sdd-delivery" / feature
     folder.mkdir(parents=True, exist_ok=True)
 
     created, skipped = [], []

@@ -12,4 +12,4 @@ Defaults:
 - Spec is mandatory before PRD review.
 - Technical solution must be reviewed before implementation.
 - Unit test plan and report are required for delivery.
-- Keep DevFlow artifacts under `.op/devflow/<feature>/`.
+- Keep DevFlow artifacts under `.sdd-delivery/<feature>/`.

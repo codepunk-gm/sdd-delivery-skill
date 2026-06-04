@@ -1,4 +1,4 @@
-﻿---
+---
 name: sdd-delivery
 description: Use for PRD-driven spec-first engineering delivery where Spec is mandatory before PRD review, followed by technical solution design, solution review, implementation, unit testing, delivery review, observable artifacts, checkpoints, and context compression. Trigger for PRD, Spec, 需求评审, 方案设计, 方案审查, 单测, 研发提效, 上下文压缩, checkpoint, 可观测交付, or 多文件研发任务.
 ---
@@ -24,9 +24,11 @@ It combines:
 
 ## Startup behavior
 
-When this skill is loaded for a new workflow and the user has not selected a specific phase, show the capability menu from eferences/capability-menu.md in concise form. Ask the user to send a PRD or choose a number.
+When this skill is loaded for a new workflow and the user has not selected a specific phase, show the capability menu from 
+eferences/capability-menu.md in concise form. Ask the user to send a PRD or choose a number.
 
-If Python is unavailable, do not fail. Use No Python Mode from eferences/ai-tool-usage.md: create and update Markdown/JSON artifacts manually, then explain which script-backed automation was skipped.
+If Python is unavailable, do not fail. Use No Python Mode from 
+eferences/ai-tool-usage.md: create and update Markdown/JSON artifacts manually, then explain which script-backed automation was skipped.
 
 ## When to use
 
@@ -106,7 +108,7 @@ Do not skip these gates unless the user explicitly overrides them:
 ## Required artifacts
 
 ```text
-.op/devflow/<feature>/
+.sdd-delivery/<feature>/
 ├── 00-prd.md
 ├── 01-spec.md
 ├── 02-spec-review.md
@@ -164,13 +166,13 @@ Prefer bundled scripts:
 
 ```bash
 python scripts/init_artifacts.py <feature-name>
-python scripts/parse_prd_to_spec.py prd.md .op/devflow/<feature-name> --force
-python scripts/trace_coverage.py .op/devflow/<feature-name>
-python scripts/scan_test_coverage.py . .op/devflow/<feature-name> --update-report --update-trace
-python scripts/sync_observability.py .op/devflow/<feature-name>
+python scripts/parse_prd_to_spec.py prd.md .sdd-delivery/<feature-name> --force
+python scripts/trace_coverage.py .sdd-delivery/<feature-name>
+python scripts/scan_test_coverage.py . .sdd-delivery/<feature-name> --update-report --update-trace
+python scripts/sync_observability.py .sdd-delivery/<feature-name>
 python scripts/generate_github_assets.py .
-python scripts/write_checkpoint.py .op/devflow/<feature-name> --phase implementation --task T1
-python scripts/validate_artifacts.py .op/devflow/<feature-name>
+python scripts/write_checkpoint.py .sdd-delivery/<feature-name> --phase implementation --task T1
+python scripts/validate_artifacts.py .sdd-delivery/<feature-name>
 python scripts/summarize_tool_output.py output.log --type test
 ```
 

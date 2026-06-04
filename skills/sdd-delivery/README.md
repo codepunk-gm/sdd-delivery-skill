@@ -1,4 +1,4 @@
-﻿# SDD Delivery Skill
+# SDD Delivery Skill
 
 [中文](#中文说明) | [English](#english)
 
@@ -91,17 +91,17 @@ Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation 
 
 ```bash
 python path/to/sdd-delivery-skill/scripts/init_artifacts.py login-rate-limit
-python path/to/sdd-delivery-skill/scripts/parse_prd_to_spec.py prd.md .op/devflow/login-rate-limit --force
-python path/to/sdd-delivery-skill/scripts/trace_coverage.py .op/devflow/login-rate-limit
-python path/to/sdd-delivery-skill/scripts/scan_test_coverage.py . .op/devflow/login-rate-limit --update-report --update-trace
-python path/to/sdd-delivery-skill/scripts/sync_observability.py .op/devflow/login-rate-limit
-python path/to/sdd-delivery-skill/scripts/validate_artifacts.py .op/devflow/login-rate-limit
+python path/to/sdd-delivery-skill/scripts/parse_prd_to_spec.py prd.md .sdd-delivery/login-rate-limit --force
+python path/to/sdd-delivery-skill/scripts/trace_coverage.py .sdd-delivery/login-rate-limit
+python path/to/sdd-delivery-skill/scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-report --update-trace
+python path/to/sdd-delivery-skill/scripts/sync_observability.py .sdd-delivery/login-rate-limit
+python path/to/sdd-delivery-skill/scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
 ```
 
 生成的研发产物位于：
 
 ```text
-.op/devflow/login-rate-limit/
+.sdd-delivery/login-rate-limit/
 ├── 00-prd.md
 ├── 01-spec.md
 ├── 02-spec-review.md
@@ -131,7 +131,7 @@ def test_login_rate_limit_blocks_after_threshold():
 然后运行：
 
 ```bash
-python path/to/sdd-delivery-skill/scripts/scan_test_coverage.py . .op/devflow/login-rate-limit --update-report --update-trace
+python path/to/sdd-delivery-skill/scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-report --update-trace
 ```
 
 脚本会生成：
@@ -205,7 +205,7 @@ Send a PRD or choose a number.
 
 如果用户本地没有 Python，技能不应该直接失败。AI agent 应改用自然语言和文件编辑完成同样流程：
 
-1. 创建 `.op/devflow/<feature>/`。
+1. 创建 `.sdd-delivery/<feature>/`。
 2. 按模板手动创建 Markdown / JSON artifacts。
 3. 手动把 PRD 整理成 `00-prd.md` 和 `01-spec.md`。
 4. 手动维护 `03-requirement-trace.md`。
@@ -229,13 +229,13 @@ Read sdd-delivery-skill/SKILL.md and follow the SDD Delivery workflow. If Python
 #### Cursor
 
 ```text
-Follow the SDD Delivery workflow in SKILL.md. Create .op/devflow/<feature> artifacts and maintain the requirement trace matrix.
+Follow the SDD Delivery workflow in SKILL.md. Create .sdd-delivery/<feature> artifacts and maintain the requirement trace matrix.
 ```
 
 #### GitHub Copilot Chat
 
 ```text
-Review this PR against .op/devflow/<feature>/01-spec.md, 03-requirement-trace.md, 04-tech-solution.md, and 09-unit-test-report.md. Findings first.
+Review this PR against .sdd-delivery/<feature>/01-spec.md, 03-requirement-trace.md, 04-tech-solution.md, and 09-unit-test-report.md. Findings first.
 ```
 
 
@@ -352,11 +352,11 @@ From your project root:
 
 ```bash
 python path/to/sdd-delivery-skill/scripts/init_artifacts.py login-rate-limit
-python path/to/sdd-delivery-skill/scripts/parse_prd_to_spec.py prd.md .op/devflow/login-rate-limit --force
-python path/to/sdd-delivery-skill/scripts/trace_coverage.py .op/devflow/login-rate-limit
-python path/to/sdd-delivery-skill/scripts/scan_test_coverage.py . .op/devflow/login-rate-limit --update-report --update-trace
-python path/to/sdd-delivery-skill/scripts/sync_observability.py .op/devflow/login-rate-limit
-python path/to/sdd-delivery-skill/scripts/validate_artifacts.py .op/devflow/login-rate-limit
+python path/to/sdd-delivery-skill/scripts/parse_prd_to_spec.py prd.md .sdd-delivery/login-rate-limit --force
+python path/to/sdd-delivery-skill/scripts/trace_coverage.py .sdd-delivery/login-rate-limit
+python path/to/sdd-delivery-skill/scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-report --update-trace
+python path/to/sdd-delivery-skill/scripts/sync_observability.py .sdd-delivery/login-rate-limit
+python path/to/sdd-delivery-skill/scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
 ```
 
 ### GitHub Integration
