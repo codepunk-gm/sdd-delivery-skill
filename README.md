@@ -16,7 +16,7 @@ SDD Delivery 是一个面向 AI 编程助手的 Spec-first 研发交付插件。
 /plugin marketplace add codepunk-gm/sdd-delivery-skill
 ```
 
-然后安装插件：
+客户端会读取本仓库根目录的 `marketplace.json`。然后安装插件：
 
 ```text
 /plugin install sdd-delivery
@@ -260,7 +260,7 @@ In the Codex client, add this repository as a plugin marketplace:
 /plugin marketplace add codepunk-gm/sdd-delivery-skill
 ```
 
-Then install the plugin:
+The client reads the root `marketplace.json` from this repository. Then install the plugin:
 
 ```text
 /plugin install sdd-delivery
@@ -342,5 +342,7 @@ Python is not required. If Python is unavailable, the agent should create and up
 ## License
 
 Choose a license before publishing. MIT is a common default for open-source developer tooling.
+
+
 
 

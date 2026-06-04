@@ -52,7 +52,7 @@ After installation, start a new Codex session and invoke:
 Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation tasks, unit tests, and observable delivery artifacts.
 ```
 
-For local development, the repository also includes `.agents/plugins/marketplace.json`, so a local checkout can be added as a marketplace root.
+For local development, the repository also includes `marketplace.json`, so a local checkout can be added as a marketplace root.
 
 ## Updating the plugin
 
@@ -118,3 +118,4 @@ python skills/sdd-delivery/scripts/generate_github_assets.py .
 ```
 
 This copies the validator to `.github/scripts/validate_devflow_artifacts.py`.
+
