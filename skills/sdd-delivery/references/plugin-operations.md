@@ -39,29 +39,20 @@ Before publishing:
 
 ## Plugin install flow
 
-Users should install the repository as a Codex plugin. After installation, they can invoke:
+For end users in the Codex client, use slash commands:
+
+```text
+/plugin marketplace add codepunk-gm/sdd-delivery-skill
+/plugin install sdd-delivery
+```
+
+After installation, start a new Codex session and invoke:
 
 ```text
 Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation tasks, unit tests, and observable delivery artifacts.
 ```
 
-The first response should be a friendly menu:
-
-```text
-I can guide this with SDD Delivery:
-1. PRD to Spec
-2. Spec Review
-3. Technical Solution
-4. Solution Review
-5. Implementation Tasks
-6. Code Implementation
-7. Unit Test Plan / Report
-8. Trace / Coverage
-9. GitHub PR / CI Assets
-10. Checkpoint / Handoff
-
-Send a PRD, choose a number, or say "quick mode" for a lightweight path.
-```
+For local development, the repository also includes `.agents/plugins/marketplace.json`, so a local checkout can be added as a marketplace root.
 
 ## Updating the plugin
 

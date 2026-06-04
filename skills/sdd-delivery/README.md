@@ -20,7 +20,12 @@ Windows 可以复制到：
 %USERPROFILE%\.codex\skills\sdd-delivery
 ```
 
-如果通过 plugin 安装，请使用仓库根目录的 `.codex-plugin/plugin.json`。
+如果通过 Codex 插件市场安装，推荐使用：
+
+```text
+/plugin marketplace add codepunk-gm/sdd-delivery-skill
+/plugin install sdd-delivery
+```
 
 ## 如何使用
 
@@ -90,7 +95,14 @@ SDD Delivery is a Spec-first delivery skill for AI coding agents. Users do not n
 
 ## Installation
 
-Copy this skill directory into Codex skills:
+To install through the Codex plugin marketplace:
+
+```text
+/plugin marketplace add codepunk-gm/sdd-delivery-skill
+/plugin install sdd-delivery
+```
+
+Or copy this skill directory into Codex skills:
 
 ```bash
 cp -R sdd-delivery ~/.codex/skills/sdd-delivery
@@ -129,3 +141,4 @@ python scripts/init_artifacts.py login-rate-limit
 python scripts/parse_prd_to_spec.py prd.md .sdd-delivery/login-rate-limit --force
 python scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
 ```
+

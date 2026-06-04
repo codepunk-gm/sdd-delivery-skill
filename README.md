@@ -8,26 +8,31 @@ SDD Delivery 是一个面向 AI 编程助手的 Spec-first 研发交付插件。
 
 ## 安装与使用
 
-### 方式一：作为 Codex 插件安装（推荐）
+### 方式一：通过 Codex 插件市场安装（推荐）
 
-如果你使用 Codex 客户端，推荐直接安装本仓库对应的插件包。仓库地址：
+在 Codex 客户端中，先添加这个仓库作为插件市场：
 
 ```text
-https://github.com/codepunk-gm/sdd-delivery-skill.git
+/plugin marketplace add codepunk-gm/sdd-delivery-skill
 ```
 
-安装完成后，在 Codex 中直接输入：
+然后安装插件：
+
+```text
+/plugin install sdd-delivery
+```
+
+安装完成后，建议开启一个新的 Codex 会话，然后输入：
 
 ```text
 使用 sdd-delivery，基于这个 PRD 生成 Spec、技术方案、审查清单、实现任务、单测计划和可观测交付产物。
 ```
 
-或者使用英文：
+也可以使用英文：
 
 ```text
 Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation tasks, unit tests, and observable delivery artifacts.
 ```
-
 ### 方式二：作为普通 Skill 安装
 
 如果你只想安装 skill，可以复制内置目录：
@@ -247,15 +252,21 @@ SDD Delivery is a Codex plugin for PRD-driven, Spec-first engineering delivery. 
 
 ## Installation and Usage
 
-### Install as a Codex plugin
+### Install from the Codex plugin marketplace
 
-Install this repository as a Codex plugin:
+In the Codex client, add this repository as a plugin marketplace:
 
 ```text
-https://github.com/codepunk-gm/sdd-delivery-skill.git
+/plugin marketplace add codepunk-gm/sdd-delivery-skill
 ```
 
-After installation, invoke:
+Then install the plugin:
+
+```text
+/plugin install sdd-delivery
+```
+
+Start a new Codex session and invoke:
 
 ```text
 Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation tasks, unit tests, and observable delivery artifacts.
@@ -331,3 +342,5 @@ Python is not required. If Python is unavailable, the agent should create and up
 ## License
 
 Choose a license before publishing. MIT is a common default for open-source developer tooling.
+
+
