@@ -1,0 +1,12 @@
+﻿__pycache__/
+*.py[cod]
+.DS_Store
+Thumbs.db
+.env
+.venv/
+node_modules/
+dist/
+build/
+*.log
+trace-coverage.json
+test-spec-coverage.json

@@ -1,0 +1,27 @@
+﻿{
+  "name": "sdd-delivery",
+  "version": "0.1.0",
+  "description": "Spec-driven delivery workflow for PRD-to-code engineering with traceability, tests, checkpoints, and observability.",
+  "author": {
+    "name": "SDD Delivery contributors"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SDD Delivery",
+    "shortDescription": "PRD-to-Spec delivery workflow for AI coding agents.",
+    "longDescription": "SDD Delivery turns PRDs into reviewed Specs, technical solutions, traceable tasks, unit tests, checkpoints, and observable engineering artifacts.",
+    "developerName": "SDD Delivery contributors",
+    "category": "Productivity",
+    "capabilities": [
+      "PRD to Spec",
+      "Spec Review",
+      "Technical Solution",
+      "Solution Review",
+      "Trace Coverage",
+      "Unit Test Report",
+      "Checkpoint",
+      "GitHub PR/CI Assets"
+    ],
+    "defaultPrompt": "Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation tasks, unit tests, and observable delivery artifacts."
+  }
+}
