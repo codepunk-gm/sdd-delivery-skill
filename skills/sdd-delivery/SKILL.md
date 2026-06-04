@@ -25,10 +25,10 @@ It combines:
 ## Startup behavior
 
 When this skill is loaded for a new workflow and the user has not selected a specific phase, show the capability menu from 
-eferences/capability-menu.md in concise form. Ask the user to send a PRD or choose a number.
+references/capability-menu.md in concise form. Ask the user to send a PRD or choose a number.
 
 If Python is unavailable, do not fail. Use No Python Mode from 
-eferences/ai-tool-usage.md: create and update Markdown/JSON artifacts manually, then explain which script-backed automation was skipped.
+references/ai-tool-usage.md: create and update Markdown/JSON artifacts manually, then explain which script-backed automation was skipped.
 
 ## When to use
 

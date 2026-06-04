@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Parse a PRD markdown file into PRD, Spec, and trace artifacts."""
 from __future__ import annotations
 

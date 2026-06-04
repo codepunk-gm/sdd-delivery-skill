@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 """Calculate requirement trace coverage and update checkpoint metrics."""
 from __future__ import annotations
 
