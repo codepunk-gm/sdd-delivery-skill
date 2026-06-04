@@ -233,19 +233,21 @@ sdd-delivery/
 
 详细说明见：`skills/sdd-delivery/references/plugin-operations.md`。
 
-## 设计参考
+## 参考的优秀设计
 
-SDD Delivery 综合参考了以下公开实践：
+SDD Delivery 不是从零发明一套流程，而是把社区里比较成熟的工程实践组合成一个适合 AI 编程助手使用的交付插件。
 
-- GitHub Spec Kit：Spec-first、阶段化、artifact-first 的 SDD 工作流。
-- OpenSpec：面向既有项目的变更规格和 brownfield 友好流程。
-- Agent Skill 模式：`SKILL.md` + `references/` + `scripts/` 的渐进加载。
-- Context checkpoint 模式：压缩 / 交接前写确定性 checkpoint。
-- Requirement Traceability：把需求、Spec、方案、任务、代码、单测串起来。
-- GitHub Delivery Practices：PR template、CI artifact validation、review gate。
+| 参考来源 | 借鉴点 | 在 SDD Delivery 中的落地 |
+|---|---|---|
+| [GitHub Spec Kit](https://github.com/github/spec-kit) | Spec-first、阶段化、以产物驱动实现 | 把 `01-spec.md` 作为 PRD 审查前置产物，并通过 Spec → 方案 → 任务 → 实现推进 |
+| [OpenSpec](https://github.com/Fission-AI/OpenSpec) | 面向既有项目的变更规格、提案和演进记录 | 增加 `04-tech-solution.md`、`05-solution-review.md`、`10-delivery-review.md`，让变更有设计和审查记录 |
+| Agent Skill 设计模式 | `SKILL.md` 负责触发和流程，详细说明按需加载 | 使用 `SKILL.md` + `references/` + `assets/templates/` + `scripts/` 的渐进加载结构 |
+| 上下文工程 / Checkpoint 实践 | 长任务不能只依赖聊天记录，需要可恢复的结构化状态 | 使用 `11-checkpoint.json`、`12-observability.md` 和 `events.jsonl` 记录阶段、风险、测试和下一步 |
+| 需求追踪矩阵 | 需求、设计、任务、代码和测试需要可追溯 | 使用 `03-requirement-trace.md` 串联 PRD、Spec、方案、任务、代码文件和单测 |
+| GitHub 交付实践 | PR 模板、CI 校验、审查清单可以降低交付风险 | 提供 `generate_github_assets.py` 生成 PR 模板和 GitHub Actions artifact 校验 |
+| 测试覆盖反查 | 测试应该能说明覆盖了哪些需求或验收标准 | 使用 `SPEC-*` 标记和 `scan_test_coverage.py` 反查单测覆盖 |
 
-详细说明见：`skills/sdd-delivery/references/open-source-influences.md`。
-
+这些参考只提供设计思路。本项目的核心目标是把它们整理成一个可安装、可交互、可恢复、可观测的 Codex 插件。
 ## English
 
 SDD Delivery is a Codex plugin for PRD-driven, Spec-first engineering delivery. It helps AI coding agents turn a PRD into a reviewed Spec, then continue through technical solution design, review gates, implementation tasks, coding, unit tests, delivery review, checkpoints, and observability.
@@ -339,9 +341,27 @@ python skills/sdd-delivery/scripts/validate_artifacts.py .sdd-delivery/login-rat
 
 Python is not required. If Python is unavailable, the agent should create and update the same Markdown / JSON artifacts manually and explain which automation steps were skipped.
 
+## Design References
+
+SDD Delivery is not a new process invented from scratch. It combines proven engineering patterns into a plugin-friendly workflow for AI coding agents.
+
+| Reference | What it inspired | How SDD Delivery applies it |
+|---|---|---|
+| [GitHub Spec Kit](https://github.com/github/spec-kit) | Spec-first development, phased workflow, artifact-driven implementation | Uses `01-spec.md` as the reviewable contract before technical solution and implementation |
+| [OpenSpec](https://github.com/Fission-AI/OpenSpec) | Brownfield-friendly change specs, proposals, and evolution records | Adds technical solution, solution review, and delivery review artifacts for existing projects |
+| Agent Skill patterns | Keep trigger logic concise and load details progressively | Uses `SKILL.md`, `references/`, `assets/templates/`, and optional `scripts/` |
+| Context engineering / checkpoint patterns | Long-running agent work needs recoverable structured state | Uses `11-checkpoint.json`, `12-observability.md`, and `events.jsonl` |
+| Requirement traceability | Requirements, design, tasks, code, and tests should stay connected | Uses `03-requirement-trace.md` to map PRD, Spec, solution, tasks, files, and tests |
+| GitHub delivery practices | PR templates, CI checks, and review checklists reduce delivery risk | Provides `generate_github_assets.py` for PR templates and GitHub Actions artifact validation |
+| Test coverage reverse mapping | Tests should indicate which requirements or acceptance criteria they cover | Uses `SPEC-*` markers and `scan_test_coverage.py` to scan unit test coverage |
+
+These projects and practices are design references, not copied implementations. SDD Delivery packages the ideas into an installable, interactive, recoverable, and observable Codex plugin.
+
 ## License
 
 Choose a license before publishing. MIT is a common default for open-source developer tooling.
+
+
 
 
 

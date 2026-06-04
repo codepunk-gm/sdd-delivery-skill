@@ -89,6 +89,9 @@ python scripts/sync_observability.py .sdd-delivery/login-rate-limit
 python scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
 ```
 
+## 设计参考
+
+本技能参考了 GitHub Spec Kit 的 Spec-first 阶段化流程、OpenSpec 的 brownfield 变更思路、Agent Skill 的渐进加载模式、checkpoint 上下文恢复实践、需求追踪矩阵，以及 GitHub PR / CI 交付实践。详细说明见：`references/open-source-influences.md`。
 ## English
 
 SDD Delivery is a Spec-first delivery skill for AI coding agents. Users do not need to remember script commands. They can send a PRD or choose a workflow stage, and the agent maintains the delivery artifacts.
@@ -141,4 +144,9 @@ python scripts/init_artifacts.py login-rate-limit
 python scripts/parse_prd_to_spec.py prd.md .sdd-delivery/login-rate-limit --force
 python scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
 ```
+
+
+## Design References
+
+This skill references GitHub Spec Kit for Spec-first phased delivery, OpenSpec for brownfield-friendly changes, Agent Skill progressive disclosure, checkpoint-based recovery, requirement traceability, and GitHub PR / CI delivery practices. See `references/open-source-influences.md` for details.
 
