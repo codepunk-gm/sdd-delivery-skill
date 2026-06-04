@@ -9,13 +9,13 @@ This Codex plugin packages the `sdd-delivery` skill for plugin-based installatio
 
 ### Hero
 
-![SDD Delivery Hero](assets/images/sdd-delivery-hero.png)
+![SDD Delivery Hero](assets/images/sdd-delivery-hero.svg)
 
 `SDD Delivery` is a PRD-driven, Spec-first delivery workflow for AI coding agents. It emphasizes traceability, review gates, and observable delivery.
 
 ### Workflow Diagram
 
-![SDD Delivery Workflow](assets/images/workflow-diagram.png)
+![SDD Delivery Workflow](assets/images/workflow-diagram.svg)
 
 The workflow connects every delivery stage:
 
@@ -25,7 +25,7 @@ PRD → Spec → Spec Review → Trace Matrix → Technical Solution → Solutio
 
 ### Friendly Guided Interaction
 
-![Friendly Guided Interaction](assets/images/interaction-demo.png)
+![Friendly Guided Interaction](assets/images/interaction-demo.svg)
 
 The skill is designed for guided interaction in Codex and other AI coding clients. Users can send a PRD, choose a number, use quick mode, or continue from a checkpoint.
 
@@ -94,4 +94,5 @@ Python scripts are optional accelerators. If Python is unavailable, the agent sh
 ## Included Skill
 
 - `skills/sdd-delivery`: PRD-driven, Spec-first delivery workflow with traceability, tests, checkpoints, observability, and friendly guided interaction.
+
 

@@ -2,9 +2,9 @@
 
 Place README images here with these recommended names:
 
-- `sdd-delivery-hero.png`
-- `workflow-diagram.png`
-- `interaction-demo.png`
+- `sdd-delivery-hero.svg`
+- `workflow-diagram.svg`
+- `interaction-demo.svg`
 
 Recommended sizes:
 
@@ -13,3 +13,4 @@ Recommended sizes:
 - Interaction demo: 1792x1024 or 16:9
 
 After adding the images, the README image links will render automatically.
+
