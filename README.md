@@ -9,13 +9,13 @@ This Codex plugin packages the `sdd-delivery` skill for plugin-based installatio
 
 ### Hero
 
-![SDD Delivery Hero](assets/images/sdd-delivery-hero.svg)
+![SDD Delivery Hero](assets/images/sdd-delivery-hero.png)
 
 `SDD Delivery` is a PRD-driven, Spec-first delivery workflow for AI coding agents. It emphasizes traceability, review gates, and observable delivery.
 
 ### Workflow Diagram
 
-![SDD Delivery Workflow](assets/images/workflow-diagram.svg)
+![SDD Delivery Workflow](assets/images/workflow-diagram.png)
 
 The workflow connects every delivery stage:
 
