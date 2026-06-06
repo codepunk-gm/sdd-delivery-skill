@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "delivery_language": "auto",
+  "comment_language": "auto",
+  "test_framework": "",
+  "coverage_target": "",
+  "code_principles": {
+    "design_patterns": true,
+    "extensibility": true,
+    "size_limits": true,
+    "naming": true,
+    "error_handling": true,
+    "review_checklist": true
+  },
+  "thresholds": {
+    "max_file_lines": 300,
+    "max_test_file_lines": 500,
+    "max_function_lines": 50,
+    "max_test_case_lines": 30,
+    "max_params": 5,
+    "max_constructor_deps": 7,
+    "max_imports": 15
+  },
+  "allowed_abbreviations": ["id", "url", "api", "db", "ui"],
+  "review": {
+    "required_reviewers": 1,
+    "p0_blocks_delivery": true,
+    "p1_requires_fix_or_acceptance": true
+  }
+}

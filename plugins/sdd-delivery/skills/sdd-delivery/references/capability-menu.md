@@ -42,11 +42,21 @@ When starting a new SDD Delivery workflow, present this menu to the user unless 
 Use concise wording:
 
 ```text
-SDD Delivery 可执行以下阶段：
+小智就绪。你可以直接发送 PRD，也可以选择阶段：
 
-1. PRD 转 Spec    2. 需求澄清      3. Spec 审查     4. 一致性分析
-5. 技术方案        6. 方案审查      7. 任务拆分      8. 代码实现
-9. 单测            10. 交付审查     11. 检查点 / 交接
+阶段菜单
+  1. PRD 转 Spec
+  2. 需求澄清
+  3. Spec 审查
+  4. 一致性分析
+  5. 技术方案
+  6. 方案审查
+  7. 任务拆分
+  8. 代码实现
+  9. 单测
+  10. 交付审查
+  11. 检查点 / 交接
 
-请发送 PRD，或回复编号继续。
+默认会使用中文产物、方案确认、按项目特征询问增强能力。
+回复“配置”可以先调整语言、团队规则和增强能力。
 ```

@@ -90,7 +90,21 @@ Required before implementation tasks.
 - Pre-mortem recorded.
 - Design is grounded in repo evidence.
 
-### Gate 6: Solution Review
+### Gate 6: Solution Approval
+
+Required after technical solution and before implementation tasks.
+
+**Pass criteria:**
+- User has explicitly approved the proposed architecture, technology stack, and implementation direction.
+- Approval, requested changes, or rejection is recorded in `11-checkpoint.json` under `solution_approval`.
+- If the user requests changes, `04-tech-solution.md` is updated and this gate is re-evaluated.
+
+**Blockers:**
+- No explicit user approval for the solution.
+- User rejects the approach or technology stack.
+- The solution changed materially after approval and was not re-approved.
+
+### Gate 7: Solution Review
 
 Required before implementation.
 
@@ -102,7 +116,7 @@ Required before implementation.
 - Security-sensitive change without audit (see `references/security-audit.md`).
 - CRITICAL or HIGH security findings unresolved.
 
-### Gate 7: TDD Gate
+### Gate 8: TDD Gate
 
 Required before writing implementation code for each task.
 
@@ -116,7 +130,7 @@ Required before writing implementation code for each task.
 - Implementation code written before test.
 - Test passes before implementation (feature already exists — task may be unnecessary).
 
-### Gate 8: Per-Task Review
+### Gate 9: Per-Task Review
 
 Required after each task completion, before the next task.
 
@@ -132,7 +146,7 @@ Required after each task completion, before the next task.
 - Failing tests introduced by the change.
 - Unrelated file modifications.
 
-### Gate 9: Unit Test Plan
+### Gate 10: Unit Test Plan
 
 Required before declaring implementation complete.
 
@@ -142,7 +156,7 @@ Required before declaring implementation complete.
 - TDD order (RED → GREEN → REFACTOR) is documented.
 - Coverage targets are stated.
 
-### Gate 10: Test Report
+### Gate 11: Test Report
 
 Required before delivery.
 
@@ -152,7 +166,22 @@ Required before delivery.
 - Failed tests are either fixed or documented as blockers.
 - Coverage gaps are acknowledged.
 
-### Gate 11: Checkpoint
+### Gate 12: Delivery Review
+
+Required before declaring the feature ready for delivery.
+
+**Pass criteria:**
+- `10-delivery-review.md` exists and findings are severity ordered.
+- Boundary verification compares declared task boundaries with changed files.
+- Test report gaps are either fixed or explicitly accepted.
+- Security audit summary is recorded.
+
+**Blockers:**
+- P0 delivery finding remains open.
+- Critical or high security issue is unresolved and not accepted by the user.
+- Changed files cannot be traced to approved tasks.
+
+### Gate 13: Checkpoint
 
 Required before stopping, compaction, or handoff.
 

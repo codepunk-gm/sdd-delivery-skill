@@ -7,12 +7,15 @@ import tempfile
 import unittest
 from pathlib import Path
 
-# Add parent directory to path for imports
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+# Add skill directory to path for imports
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts._utils import is_filled, parse_markdown_table, parse_markdown_table_file, safe_feature_name
 from scripts.parse_prd_to_spec import extract_items
 from scripts.scan_test_coverage import is_test_file
+from scripts.write_checkpoint import default_checkpoint, load_checkpoint_or_default, normalize_capabilities, set_capability
+from scripts.manage_capabilities import executor_plan, load_registry
+from scripts.setup_team_rules import default_rules, validate_rules
 
 
 class TestSafeFeatureName(unittest.TestCase):
@@ -222,6 +225,95 @@ class TestIsTestFile(unittest.TestCase):
 
     def test_java_test_file(self):
         self.assertTrue(is_test_file(Path("ServiceTest.java")))
+
+
+class TestCheckpointDefaults(unittest.TestCase):
+    """Tests for write_checkpoint checkpoint loading defaults."""
+
+    def test_missing_checkpoint_returns_default(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            folder = Path(temp_dir) / "feature-a"
+            folder.mkdir()
+            checkpoint = load_checkpoint_or_default(folder / "11-checkpoint.json")
+
+        self.assertEqual(checkpoint["feature"], "feature-a")
+        self.assertEqual(checkpoint["gate_status"]["solution_approval"], "pending")
+        self.assertEqual(checkpoint["preferences"]["delivery_language"], "auto")
+        self.assertEqual(checkpoint["solution_approval"]["status"], "pending")
+        self.assertEqual(checkpoint["capabilities"]["frontend_template"]["state"], "ask")
+
+    def test_default_checkpoint_has_capability_fields(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            checkpoint = default_checkpoint(Path(temp_dir) / "feature-b")
+
+        self.assertIn("enabled_capabilities", checkpoint)
+        self.assertIn("capabilities", checkpoint)
+        self.assertIn("preferences", checkpoint)
+        self.assertIn("solution_approval", checkpoint)
+
+    def test_legacy_enabled_capabilities_migrate_to_structured_switches(self):
+        checkpoint = default_checkpoint(Path("feature-c"))
+        checkpoint["enabled_capabilities"] = ["frontend_template"]
+        checkpoint.pop("capabilities")
+
+        normalize_capabilities(checkpoint)
+
+        self.assertEqual(checkpoint["capabilities"]["frontend_template"]["state"], "enabled")
+        self.assertEqual(checkpoint["enabled_capabilities"], ["frontend_template"])
+
+    def test_set_capability_disabled_updates_structured_switch(self):
+        checkpoint = default_checkpoint(Path("feature-d"))
+
+        set_capability(checkpoint, "mcp_component_protocol=disabled:not used by this repo")
+
+        self.assertEqual(checkpoint["capabilities"]["mcp_component_protocol"]["state"], "disabled")
+        self.assertEqual(checkpoint["capabilities"]["mcp_component_protocol"]["reason"], "not used by this repo")
+        self.assertNotIn("mcp_component_protocol", checkpoint["enabled_capabilities"])
+
+    def test_set_capability_without_state_enables_legacy_style(self):
+        checkpoint = default_checkpoint(Path("feature-e"))
+
+        set_capability(checkpoint, "java_modular_project")
+
+        self.assertEqual(checkpoint["capabilities"]["java_modular_project"]["state"], "enabled")
+        self.assertIn("java_modular_project", checkpoint["enabled_capabilities"])
+
+
+class TestCapabilityRegistry(unittest.TestCase):
+    """Tests for capability adapter/executor registry."""
+
+    def test_registry_has_executor_config(self):
+        registry = load_registry()
+
+        self.assertIn("frontend_template", registry)
+        self.assertEqual(registry["frontend_template"]["executor"]["type"], "phase-instructions")
+
+    def test_executor_plan_uses_enabled_capabilities_only(self):
+        checkpoint = default_checkpoint(Path("feature-f"))
+        registry = load_registry()
+        set_capability(checkpoint, "frontend_template=enabled")
+        set_capability(checkpoint, "mcp_component_protocol=disabled")
+
+        plan = executor_plan(checkpoint, registry)
+
+        self.assertEqual([item["id"] for item in plan], ["frontend_template"])
+
+
+class TestTeamRules(unittest.TestCase):
+    """Tests for structured team rule setup and validation."""
+
+    def test_default_rules_are_valid(self):
+        issues, warnings = validate_rules(default_rules())
+
+        self.assertEqual(issues, [])
+
+    def test_invalid_threshold_is_rejected(self):
+        rules = default_rules()
+        rules["thresholds"]["max_params"] = 0
+
+        issues, _ = validate_rules(rules)
+
+        self.assertTrue(any("max_params" in issue for issue in issues))
 
 
 if __name__ == "__main__":

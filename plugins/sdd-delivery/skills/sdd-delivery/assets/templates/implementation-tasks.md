@@ -1,40 +1,40 @@
-# Implementation Tasks
+# 实现任务
 
-> Instructions: Every task must include `_Boundary:_`, `_Depends:_`, `_Size:_`, and `[P]` marker if parallelizable. No XL tasks. Split tasks that exceed 200 lines. Fill findings first, then tasks.
+> 使用说明：每个任务必须包含 `_Boundary:_`、`_Depends:_`、`_Size:_`，可并行任务使用 `[P]` 标记。禁止 XL 任务，超过 200 行预估变更必须拆分。
 
-## Tasks
+## 任务列表
 
-### T1: [P] [SPEC-1] Implement user login endpoint
+### T1: [P] [SPEC-1] 实现用户登录接口
 
-_Boundary:_ src/api/auth/ only. Do not touch src/models/ or src/services/.
+_Boundary:_ 仅 src/api/auth/。不要修改 src/models/ 或 src/services/。
 _Depends:_ None
 _Size:_ M
 
-- [ ] T1 [P] [SPEC-1] Implement POST /auth/login in src/api/auth/login.py
+- [ ] T1 [P] [SPEC-1] 在 src/api/auth/login.py 实现 POST /auth/login
   - **Files:** src/api/auth/login.py, src/api/auth/__init__.py
   - **Verify:** `pytest tests/api/auth/test_login.py -v`
-  - **Pre-TDD:** Write test first, confirm RED, then implement
+  - **Pre-TDD:** 先写测试并确认 RED，再实现
 
-### T2: [SPEC-2] Add login rate limiting
+### T2: [SPEC-2] 增加登录限流
 
-_Boundary:_ src/middleware/rate_limit/ only. Do not touch src/api/.
-_Depends:_ T1 (login endpoint)
+_Boundary:_ 仅 src/middleware/rate_limit/。不要修改 src/api/。
+_Depends:_ T1（登录接口）
 _Size:_ S
 
-- [ ] T2 [SPEC-2] Add rate limiter middleware in src/middleware/rate_limit/login_limiter.py
+- [ ] T2 [SPEC-2] 在 src/middleware/rate_limit/login_limiter.py 增加限流中间件
   - **Files:** src/middleware/rate_limit/login_limiter.py
   - **Verify:** `pytest tests/middleware/rate_limit/test_login_limiter.py -v`
 
-## Implementation Notes
+## 实现备注
 
-> Cross-task learnings. Update as you progress so later tasks benefit from earlier discoveries.
+> 记录跨任务经验。随着实现推进持续更新，避免后续任务重复踩坑。
 
 - T1: [learning]
 - T2: [learning]
 
-## Task Sizes
+## 任务规模
 
-| Task | Size | Lines (est.) | Ready? |
-|------|------|-------------|--------|
-| T1 | M | ~120 | ✅ (no deps) |
-| T2 | S | ~45 | ⏳ (depends on T1) |
+| 任务 | 规模 | 预估行数 | 是否就绪 |
+|------|------|----------|----------|
+| T1 | M | ~120 | Yes（无依赖） |
+| T2 | S | ~45 | Pending（依赖 T1） |

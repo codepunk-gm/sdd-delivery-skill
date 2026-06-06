@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.2.0-blue" alt="Version">
+  <img src="https://img.shields.io/badge/version-0.3.0-blue" alt="Version">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
   <img src="https://img.shields.io/badge/agents-Codex%20%7C%20Claude%20Code%20%7C%20Cursor%20%7C%20Copilot%20%7C%20Windsurf-orange" alt="Agents">
   <img src="https://img.shields.io/badge/python-optional-lightgrey" alt="Python">
@@ -33,6 +33,15 @@ SDD Delivery 是一个面向 AI 编程助手的 Spec-first 研发交付技能包
 7. No-Python Universality — 脚本是加速器，不是依赖
 8. Evidence Over Assertion — 每个 repo 事实必须有来源
 
+**v0.3 新增：**
+- 方案确认门禁：技术方案和技术栈必须由用户确认后才能进入任务拆分 / 实现
+- 可插拔能力注册：前端模板、Java 模块化项目、MCP 组件协议、GitHub 交付资产、团队代码原则可按节点启用
+- 工程化开关：每个能力支持 `enabled` / `disabled` / `ask` 三态，记录在 checkpoint，避免重复询问
+- 增强能力规划：自动检测项目特征，按需启用前端模板保护、组件协议支持、团队代码原则等能力
+- 语言与团队规则启动设置：可自动推断或配置中文 / 英文 / 双语产物语言，并记录在 checkpoint
+- 团队规则配置：`setup_team_rules.py` 初始化并校验 `.sdd-delivery/team-rules.json`
+- 中断恢复协议：实现或测试中被追问 / 打岔后，先保存状态，再回到原链路或重置下游门禁
+
 ### 快速开始
 
 **Claude Code:**
@@ -51,10 +60,21 @@ SDD Delivery 是一个面向 AI 编程助手的 Spec-first 研发交付技能包
 启动后发送 PRD，或选择阶段：
 
 ```text
-1. PRD 转 Spec    2. 需求澄清      3. Spec 审查     4. 一致性分析
-5. 技术方案        6. 方案审查      7. 任务拆分      8. 代码实现
-9. 单测            10. 交付审查     11. 检查点 / 交接
+阶段菜单
+  1. PRD 转 Spec
+  2. 需求澄清
+  3. Spec 审查
+  4. 一致性分析
+  5. 技术方案
+  6. 方案审查
+  7. 任务拆分
+  8. 代码实现
+  9. 单测
+  10. 交付审查
+  11. 检查点 / 交接
 ```
+
+默认助理名为「小智」。小智会使用中文产物，关键方案先确认；如果中途打断或改方向，会记录状态并把流程带回正轨。
 
 ### 使用指南
 
@@ -141,6 +161,13 @@ python scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-r
 # 同步可观测面板
 python scripts/sync_observability.py .sdd-delivery/login-rate-limit
 
+# 检测并规划可插拔能力
+python scripts/manage_capabilities.py .sdd-delivery/login-rate-limit --project-root . --detect --plan
+
+# 初始化 / 校验团队规则
+python scripts/setup_team_rules.py --root . --init
+python scripts/setup_team_rules.py --root . --validate
+
 # 验证产物完整性
 python scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
 
@@ -174,6 +201,7 @@ SKILL.md (触发 + 流程编排)
 | [cc-sdd](https://github.com/gotalab/cc-sdd) | Discovery 路由、边界标注、每任务审查 |
 | [Don Cheli SDD](https://github.com/doncheli/don-cheli-sdd) | TDD 阻断、事前验尸、OWASP 安全审计 |
 | [PreviewForge](https://github.com/two-weeks-team/previewforgeforclaudecode) | 多智能体审查、分控交付 |
+| [Superpowers](https://github.com/obra/superpowers) | 可组合技能、计划确认、TDD、执行批次、审查节点 |
 | OpenSpec | 存量项目变更规格 |
 | Agent Skill 模式 | SKILL.md + references 渐进加载 |
 | 上下文工程实践 | Checkpoint / Observability / events.jsonl |

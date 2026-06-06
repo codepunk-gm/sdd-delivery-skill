@@ -38,12 +38,23 @@ Windows 可以复制到：
 启动后发送 PRD，或选择阶段：
 
 ```text
-1. PRD 转 Spec    2. 需求澄清      3. Spec 审查     4. 一致性分析
-5. 技术方案        6. 方案审查      7. 任务拆分      8. 代码实现
-9. 单测            10. 交付审查     11. 检查点 / 交接
+阶段菜单
+  1. PRD 转 Spec
+  2. 需求澄清
+  3. Spec 审查
+  4. 一致性分析
+  5. 技术方案
+  6. 方案审查
+  7. 任务拆分
+  8. 代码实现
+  9. 单测
+  10. 交付审查
+  11. 检查点 / 交接
 
 请发送 PRD，或回复编号继续。
 ```
+
+默认助理名为「小智」。小智会使用中文产物，关键方案先确认；如果中途打断或改方向，会记录状态并把流程带回正轨。
 
 ## 视觉概览
 
@@ -67,6 +78,16 @@ Windows 可以复制到：
 10. 交付审查 — 边界验证、追踪覆盖、安全审计
 11. 检查点 / 交接 — 结构化状态保存，支持中断恢复
 
+## v0.3 工作流增强
+
+- 方案确认门禁：`04-tech-solution.md` 完成后必须确认架构和技术栈，再进入任务拆分。
+- 可插拔能力：按需启用前端模板、Java 模块化项目、MCP 组件协议、GitHub 交付资产和团队代码原则。
+- 工程化开关：每个能力支持 `enabled` / `disabled` / `ask` 三态，记录在 checkpoint。
+- 增强能力规划：自动检测项目特征，按需启用前端模板保护、组件协议支持、团队代码原则等能力。
+- 团队规则脚本：`setup_team_rules.py` 初始化并校验 `.sdd-delivery/team-rules.json`。
+- 语言偏好：根据用户输入、仓库文档和团队规则推断产物语言，也可显式设置中文 / 英文 / 双语。
+- 中断恢复：实现或测试中被追问、打岔或改需求时，先 checkpoint，再恢复原链路或重置下游门禁。
+
 ## 无 Python 模式
 
 Python 不是使用前提。没有 Python 时，AI 应直接手动创建和更新 Markdown / JSON 产物，并说明哪些自动化步骤被跳过。
@@ -82,6 +103,8 @@ python scripts/trace_coverage.py .sdd-delivery/login-rate-limit
 python scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-report --update-trace
 python scripts/sync_observability.py .sdd-delivery/login-rate-limit
 python scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
+python scripts/manage_capabilities.py .sdd-delivery/login-rate-limit --project-root . --detect --plan
+python scripts/setup_team_rules.py --root . --init
 ```
 
 ## 设计参考
@@ -137,4 +160,3 @@ python scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
 ## Design References
 
 This skill references GitHub Spec Kit for Spec-first phased delivery, OpenSpec for brownfield-friendly changes, Agent Skill progressive disclosure, checkpoint-based recovery, requirement traceability, and GitHub PR / CI delivery practices. See `references/open-source-influences.md` for details.
-

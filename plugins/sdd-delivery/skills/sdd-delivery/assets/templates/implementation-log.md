@@ -1,27 +1,29 @@
-# Implementation Log
+# 实现日志
 
-> Instructions: Log every task completion here. Each row records what changed, which files, review status, and notes. Update after every task.
+> 使用说明：每完成一个任务都在这里记录。每行说明目标、边界、变更文件、测试、审查状态和备注。任务完成后立即更新。
 
-## Tasks
+## 任务记录
 
-| Time | Task | Goal | Boundary | Files Changed | Tests | Review Status | Reviewer | Notes |
+| 时间 | 任务 | 目标 | 边界 | 变更文件 | 测试 | 审查状态 | 审查人 | 备注 |
 |---|---|---|---|---|---|---|---|---|
-| 2025-01-01T10:00:00Z | T1 | Add user model | src/models/user/ only | user.py, __init__.py | test_user.py (3 pass) | pass | self | |
+| 2025-01-01T10:00:00Z | T1 | 新增用户模型 | 仅 src/models/user/ | user.py, __init__.py | test_user.py (3 pass) | pass | self | |
 
-## Review Notes
+## 审查记录
 
-### T1: Add user model
-- Boundary check: ✅ All changes in src/models/user/
-- Test check: ✅ 3/3 tests pass, GREEN
-- Scope check: ✅ No unrelated file changes
-- Notes: Migration applied successfully. Index on email column.
+### T1: 新增用户模型
 
-### T2: <goal>
-- Boundary check:
-- Test check:
-- Scope check:
-- Notes:
+- 边界检查：通过，全部变更位于 src/models/user/
+- 测试检查：通过，3/3 tests pass，GREEN
+- 范围检查：通过，无无关文件变更
+- 备注：迁移已应用，email 索引已创建
 
-## Implementation Notes (cross-task learnings)
+### T2: <目标>
 
-- [Learning from earlier tasks to propagate forward]
+- 边界检查：
+- 测试检查：
+- 范围检查：
+- 备注：
+
+## 实现备注（跨任务经验）
+
+- [记录前序任务中需要传递给后续任务的经验]

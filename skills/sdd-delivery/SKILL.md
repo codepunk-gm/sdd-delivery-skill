@@ -21,6 +21,8 @@ It combines:
 - bounded implementation with per-task review
 - TDD structural blocking (RED → GREEN → REFACTOR)
 - parallel task markers for independent work
+- explicit user approval of solution and technology stack before implementation
+- optional pluggable capabilities with `enabled|disabled|ask` switches for frontend templates, Java modular projects, MCP components, and team rules
 - unit test planning and execution
 - deterministic checkpoint recovery
 - observable delivery metrics
@@ -85,12 +87,14 @@ Do not skip these gates unless the user explicitly overrides them:
 3. **Spec Review Gate** — Spec Review must pass or record open issues before technical solution.
 4. **Analyze Gate** — Cross-artifact consistency must be confirmed or gaps accepted before technical solution.
 5. **Solution Gate** — Technical Solution must exist before implementation tasks.
-6. **Solution Review Gate** — Solution Review must pass or record accepted risks before coding.
-7. **TDD Gate** — Tests must be written and failing (RED) before implementation code is written (GREEN).
-8. **Per-Task Review Gate** — Each completed task must be reviewed before the next task begins.
-9. **Unit Test Gate** — Unit Test Plan must exist before declaring implementation complete.
-10. **Test Report Gate** — Unit Test Report or documented verification gap is required before delivery.
-11. **Checkpoint Gate** — Checkpoint and observability must be updated before stopping, compaction, or handoff.
+6. **Solution Approval Gate** — User must approve the solution and technology stack before implementation tasks.
+7. **Solution Review Gate** — Solution Review must pass or record accepted risks before coding.
+8. **TDD Gate** — Tests must be written and failing (RED) before implementation code is written (GREEN).
+9. **Per-Task Review Gate** — Each completed task must be reviewed before the next task begins.
+10. **Unit Test Gate** — Unit Test Plan must exist before declaring implementation complete.
+11. **Test Report Gate** — Unit Test Report or documented verification gap is required before delivery.
+12. **Delivery Review Gate** — Delivery Review must pass or record accepted risks before delivery.
+13. **Checkpoint Gate** — Checkpoint and observability must be updated before stopping, compaction, or handoff.
 
 See `references/gates.md` for the gate state machine and blocked-gate protocol.
 
@@ -104,6 +108,11 @@ See `references/gates.md` for the gate state machine and blocked-gate protocol.
 - Every implementation task must trace back to Spec items and include `_Boundary:_` annotation.
 - Every unit test must trace back to Spec acceptance criteria when possible.
 - Every task that depends on another must include `_Depends:_` annotation.
+- Technical solution must be explicitly approved by the user before task splitting or implementation.
+- At startup, infer or ask for artifact language preference, then record it in checkpoint preferences.
+- At startup, offer team-rule setup; users may configure or skip it.
+- Before phases with optional extension points, read `references/capability-registry.md` and apply capability switches from checkpoint.
+- When discussing optional capabilities with the user, use user-facing names and benefits; hide internal adapter/executor terminology unless asked.
 - Do not modify unrelated files. Boundary violations are P0 rejections.
 - Do not treat stale code facts as durable memory.
 - No single task may exceed 200 lines of change (L size) without explicit justification.
@@ -151,6 +160,8 @@ See `references/gates.md` for the gate state machine and blocked-gate protocol.
 - Run pre-mortem using `references/pre-mortem.md`: "Assume this solution failed. Why?"
 - Write `04-tech-solution.md` with repo-grounded design and verification strategy.
 - Record pre-mortem findings in the solution under `## Pre-Mortem`.
+- Present architecture, technology stack, affected modules, rollback, and verification summary.
+- **Gate:** Ask the user to approve, request changes, reject, or swap technology stack before task splitting.
 
 ### 8. Solution Review
 - Review architecture, compatibility, security, performance, scope, and testability in `05-solution-review.md`.
@@ -230,6 +241,9 @@ Depends on:
 Relevant files:
 Verification:
 Stop conditions:
+Enabled capabilities:
+Capability switches:
+Solution approval:
 ```
 
 ## Reference loading
@@ -249,6 +263,8 @@ Stop conditions:
 - Read `references/security-audit.md` before Solution Review (phase 8) and Delivery Review (phase 13).
 - Read `references/context-policy.md` before broad repo exploration, compaction, or recovery.
 - Read `references/team-rules.md` for organization-specific conventions.
+- Read `references/code-principles.md` when team code principle modules are enabled.
+- Read `references/capability-registry.md` before asking whether to enable optional capability modules.
 - Read `references/capability-menu.md` when starting a new workflow.
 - Read `references/interaction-model.md` for guided interaction and recovery mode.
 - Read `references/ai-tool-usage.md` for multi-tool and No-Python guidance.
@@ -269,6 +285,8 @@ python scripts/scan_test_coverage.py . .sdd-delivery/<feature-name> --update-rep
 python scripts/sync_observability.py .sdd-delivery/<feature-name>
 python scripts/generate_github_assets.py .
 python scripts/write_checkpoint.py .sdd-delivery/<feature-name> --phase implementation --task T1
+python scripts/manage_capabilities.py .sdd-delivery/<feature-name> --project-root . --detect --plan
+python scripts/setup_team_rules.py --root . --init
 python scripts/validate_artifacts.py .sdd-delivery/<feature-name>
 python scripts/summarize_tool_output.py output.log --type test
 ```

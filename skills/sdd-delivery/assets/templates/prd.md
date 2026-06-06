@@ -1,15 +1,15 @@
 # PRD
 
-## Source
+## 来源
 
-## Business Goal
+## 业务目标
 
-## PRD Items
+## PRD 条目
 
-| PRD ID | Requirement | Priority | Notes |
+| PRD ID | 需求 | 优先级 | 备注 |
 |---|---|---|---|
 | PRD-1 | | Must | |
 
-## Constraints
+## 约束
 
-## Unknowns
+## 未知项

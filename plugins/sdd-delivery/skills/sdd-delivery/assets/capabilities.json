@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "capabilities": {
+    "frontend_template": {
+      "state_default": "ask",
+      "adapter": {
+        "type": "repo-scan",
+        "signals": ["package.json", "vite.config.*", "next.config.*", "src/components", "app", "pages"]
+      },
+      "executor": {
+        "type": "phase-instructions",
+        "phases": ["technical-solution", "implementation-tasks", "unit-test-plan"],
+        "reference": "references/capability-registry.md#frontend-template-module"
+      }
+    },
+    "java_modular_project": {
+      "state_default": "ask",
+      "adapter": {
+        "type": "repo-scan",
+        "signals": ["pom.xml", "build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts", "src/main/java"]
+      },
+      "executor": {
+        "type": "phase-instructions",
+        "phases": ["technical-solution", "implementation-tasks"],
+        "reference": "references/capability-registry.md#java-modular-project-module"
+      }
+    },
+    "mcp_component_protocol": {
+      "state_default": "ask",
+      "adapter": {
+        "type": "tool-discovery",
+        "signals": ["mcp", "component mcp", "design-system mcp"]
+      },
+      "executor": {
+        "type": "tool-mediated",
+        "phases": ["technical-solution", "implementation"],
+        "reference": "references/capability-registry.md#mcp-component-protocol-module"
+      }
+    },
+    "github_delivery_assets": {
+      "state_default": "ask",
+      "adapter": {
+        "type": "repo-scan",
+        "signals": [".github/workflows", ".github/pull_request_template.md"]
+      },
+      "executor": {
+        "type": "script",
+        "phases": ["delivery-review"],
+        "command": "python scripts/generate_github_assets.py .",
+        "reference": "references/github-integration.md"
+      }
+    },
+    "team_code_principles": {
+      "state_default": "ask",
+      "adapter": {
+        "type": "team-rule",
+        "signals": ["team rules requested", "code review rules requested"]
+      },
+      "executor": {
+        "type": "review-checklist",
+        "phases": ["per-task-review", "delivery-review"],
+        "reference": "references/code-principles.md"
+      }
+    }
+  }
+}

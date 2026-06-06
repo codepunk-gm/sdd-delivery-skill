@@ -1,49 +1,49 @@
-# Spec Review
+# Spec 审查
 
-> Instructions: Fill findings first (severity-ordered P0→P3). Check each category. Do not resolve a finding without updating the related artifact. Then record gate result.
+> 使用说明：先填写发现项（按 P0 -> P3 排序），再检查各分类。不要只在聊天里解决问题，必须同步更新相关产物，最后记录门禁结果。
 
-## Gate Result
+## 门禁结果
 
 Status: pending (pending | in_review | passed | accepted_risk | blocked)
 
-## Findings
+## 发现项
 
-| # | Severity | Category | Finding | Related Item | Suggestion | Status |
-|---|---|---|---|---|---|---|---|
-| 1 | P0 | Missing AC | SPEC-3 has no acceptance criteria | SPEC-3 | Add "User receives email within 30 seconds" | Open |
+| # | 严重级别 | 分类 | 问题 | 相关条目 | 建议 | 状态 |
+|---|---|---|---|---|---|---|
+| 1 | P0 | 缺少验收标准 | SPEC-3 没有验收标准 | SPEC-3 | 增加可观测验收标准 | Open |
 
-## Coverage Check
+## 覆盖检查
 
-- [ ] Every P0/P1 PRD item has a corresponding Spec item
-- [ ] Every Spec item has acceptance criteria
-- [ ] Non-goals are explicitly listed
-- [ ] Boundaries (`_Boundary:_`) declared for cross-cutting items
+- [ ] 每个 P0/P1 PRD 条目都有对应 Spec 条目
+- [ ] 每个 Spec 条目都有验收标准
+- [ ] 非目标已明确列出
+- [ ] 跨模块条目声明了边界（`_Boundary:_`）
 
-## Clarity Check
+## 清晰度检查
 
-- [ ] No ambiguous verbs (process, handle, manage, support) without concrete definition
-- [ ] No vague adjectives (fast, scalable, robust) without measurable criteria
-- [ ] No "etc.", "and so on", or unbounded scope markers
+- [ ] 没有未定义的模糊动词
+- [ ] 没有无法衡量的模糊形容词
+- [ ] 没有“等等”“诸如此类”等无限范围表达
 
-## Testability Check
+## 可测试性检查
 
-- [ ] Every acceptance criterion describes an observable outcome
-- [ ] Edge cases (error, empty, race, timeout) are covered
-- [ ] Test framework and approach are feasible for this Spec
+- [ ] 每个验收标准都有可观测结果
+- [ ] 覆盖错误、空值、并发、超时等边界场景
+- [ ] 测试框架和方法可行
 
-## Constitution Check
+## 宪法原则检查
 
-- [ ] Spec Before Code: No implementation details in Spec
-- [ ] Evidence Over Assertion: Spec claims are grounded in PRD evidence
-- [ ] Traceability Forever: Spec items can be mapped to code
+- [ ] Spec Before Code：Spec 不提前写实现细节
+- [ ] Evidence Over Assertion：Spec 结论有 PRD 证据
+- [ ] Traceability Forever：Spec 条目可追踪到代码和测试
 
-## Decision
+## 决策
 
-- [ ] Proceed to Technical Solution (gate passed)
-- [ ] Proceed with accepted risks (list below)
-- [ ] Blocked (P0 issues must be resolved first)
+- [ ] 进入技术方案（门禁通过）
+- [ ] 带已接受风险继续（见下表）
+- [ ] 阻塞（P0 必须先解决）
 
-### Accepted Risks
+### 已接受风险
 
-| Risk | Reason | Accepted By | Expiry |
-|------|--------|-------------|--------|
+| 风险 | 原因 | 接受人 | 到期 |
+|------|------|--------|------|

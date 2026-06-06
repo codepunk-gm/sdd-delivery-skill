@@ -1,14 +1,14 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "sdd-delivery-skill",
-  "description": "SDD Delivery — Spec-driven delivery workflow for PRD-to-code engineering with traceability, tests, checkpoints, and observability.",
+  "description": "SDD Delivery — Spec-driven delivery workflow for PRD-to-code engineering with user-approved solutions, pluggable capabilities, traceability, tests, checkpoints, and observability.",
   "owner": {
     "name": "codepunk-gm"
   },
   "plugins": [
     {
       "name": "sdd-delivery",
-      "description": "Turn PRDs into reviewed Specs, technical solutions, traceable tasks, unit tests, checkpoints, and observable engineering artifacts.",
+      "description": "Turn PRDs into reviewed Specs, user-approved technical solutions, traceable tasks, unit tests, checkpoints, and observable engineering artifacts.",
       "author": {
         "name": "SDD Delivery contributors"
       },

@@ -32,6 +32,11 @@ REQUIRED_CHECKPOINT_FIELDS = [
     "gate_status",
     "completed_tasks",
     "pending_tasks",
+    "enabled_capabilities",
+    "capability_executor_plan",
+    "capabilities",
+    "preferences",
+    "solution_approval",
     "decisions",
     "repo_facts",
     "changed_files",
@@ -43,12 +48,23 @@ REQUIRED_CHECKPOINT_FIELDS = [
     "updated_at",
 ]
 
+REQUIRED_CAPABILITIES = [
+    "frontend_template",
+    "java_modular_project",
+    "mcp_component_protocol",
+    "github_delivery_assets",
+    "team_code_principles",
+]
+
+CAPABILITY_STATES = {"enabled", "disabled", "ask"}
+
 REQUIRED_GATES = [
     "clarify",
     "spec",
     "spec_review",
     "analyze",
     "solution",
+    "solution_approval",
     "solution_review",
     "tdd",
     "per_task_review",
@@ -97,6 +113,29 @@ def main() -> int:
                 elif gates.get(gate) != "passed":
                     msg = f"gate not passed: {gate}={gates.get(gate)}"
                     (issues if args.strict else warnings).append(msg)
+            capabilities = checkpoint.get("capabilities", {})
+            if not isinstance(capabilities, dict):
+                issues.append("checkpoint capabilities must be an object")
+            else:
+                for capability_id in REQUIRED_CAPABILITIES:
+                    capability = capabilities.get(capability_id)
+                    if not isinstance(capability, dict):
+                        issues.append(f"checkpoint missing capability switch: {capability_id}")
+                        continue
+                    state = capability.get("state")
+                    if state not in CAPABILITY_STATES:
+                        issues.append(f"invalid capability state: {capability_id}={state}")
+                enabled_index = checkpoint.get("enabled_capabilities", [])
+                if not isinstance(enabled_index, list):
+                    issues.append("checkpoint enabled_capabilities must be a list")
+                else:
+                    structured_enabled = sorted(
+                        capability_id
+                        for capability_id, capability in capabilities.items()
+                        if isinstance(capability, dict) and capability.get("state") == "enabled"
+                    )
+                    if sorted(enabled_index) != structured_enabled:
+                        warnings.append("enabled_capabilities index does not match capabilities states")
         except json.JSONDecodeError as exc:
             issues.append(f"checkpoint invalid json: {exc}")
 

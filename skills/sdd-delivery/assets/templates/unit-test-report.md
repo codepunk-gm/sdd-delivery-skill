@@ -1,13 +1,13 @@
-# Unit Test Report
+# 单测报告
 
-## Commands
+## 执行命令
 
-| Time | Command | Status | Summary |
+| 时间 | 命令 | 状态 | 摘要 |
 |---|---|---|---|
 
-## Failed Tests
+## 失败测试
 
-## Coverage Gaps
+## 覆盖缺口
 
-| Spec ID | Reason | Accepted By |
+| Spec ID | 原因 | 接受人 |
 |---|---|---|

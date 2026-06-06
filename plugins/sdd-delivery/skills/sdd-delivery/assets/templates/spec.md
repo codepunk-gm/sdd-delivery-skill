@@ -1,15 +1,15 @@
 # Spec
 
-## Scope
+## 范围
 
-## Spec Items
+## Spec 条目
 
-| Spec ID | PRD ID | Behavior | Acceptance Criteria | Priority |
+| Spec ID | PRD ID | 行为 | 验收标准 | 优先级 |
 |---|---|---|---|---|
 | SPEC-1 | PRD-1 | | | Must |
 
-## Edge Cases
+## 边界场景
 
-## Non-Goals
+## 非目标
 
-## Open Questions
+## 待确认问题

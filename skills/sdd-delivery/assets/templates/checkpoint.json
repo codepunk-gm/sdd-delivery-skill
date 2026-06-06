@@ -10,6 +10,7 @@
     "spec_review": "pending",
     "analyze": "pending",
     "solution": "pending",
+    "solution_approval": "pending",
     "solution_review": "pending",
     "tdd": "pending",
     "per_task_review": "pending",
@@ -19,6 +20,52 @@
   },
   "completed_tasks": [],
   "pending_tasks": [],
+  "enabled_capabilities": [],
+  "capability_executor_plan": [],
+  "capabilities": {
+    "frontend_template": {
+      "state": "ask",
+      "reason": "",
+      "source": "default",
+      "updated_at": ""
+    },
+    "java_modular_project": {
+      "state": "ask",
+      "reason": "",
+      "source": "default",
+      "updated_at": ""
+    },
+    "mcp_component_protocol": {
+      "state": "ask",
+      "reason": "",
+      "source": "default",
+      "updated_at": ""
+    },
+    "github_delivery_assets": {
+      "state": "ask",
+      "reason": "",
+      "source": "default",
+      "updated_at": ""
+    },
+    "team_code_principles": {
+      "state": "ask",
+      "reason": "",
+      "source": "default",
+      "updated_at": ""
+    }
+  },
+  "preferences": {
+    "delivery_language": "auto",
+    "comment_language": "auto",
+    "team_rule_setup": "pending"
+  },
+  "solution_approval": {
+    "status": "pending",
+    "approver": "",
+    "notes": "",
+    "source": "",
+    "time": ""
+  },
   "decisions": [],
   "repo_facts": [],
   "changed_files": [],

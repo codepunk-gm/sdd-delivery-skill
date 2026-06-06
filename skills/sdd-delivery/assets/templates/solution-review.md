@@ -1,18 +1,23 @@
-# Solution Review
+# 方案审查
 
-## Gate Result
+## 门禁结果
 
 Status: pending
 
-## Findings
+## 发现项
 
-| Severity | Finding | Area | Required Action | Status |
+| 严重级别 | 问题 | 区域 | 必需动作 | 状态 |
 |---|---|---|---|---|
 
-## Architecture Fit
+## 架构适配
 
-## Risk Review
+## 风险审查
 
-## Testability Review
+## 可测试性审查
 
-## Decision
+## 安全审计
+
+| # | 分类 | 问题 | 严重级别 | 建议修复 | 状态 |
+|---|---|---|---|---|---|
+
+## 决策
