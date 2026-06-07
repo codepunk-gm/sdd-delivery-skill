@@ -114,9 +114,12 @@ When enabled:
 When enabled:
 
 - Discover available MCP component/tool capabilities before inventing UI components.
+- Create or update `mcp-discovery.json` and `mcp-component-selection.md` as evidence artifacts.
 - Record chosen MCP component/tool names and evidence in `04-tech-solution.md`.
 - If MCP is unavailable, document the fallback and ask before replacing it with hand-built components.
 - Add verification for rendered component states and integration points.
+
+Use `python scripts/record_mcp_discovery.py .sdd-delivery/<feature> --enable-capability ...` when Python is available. In No-Python mode, create or edit the two MCP evidence files manually using the templates.
 
 ## GitHub Delivery Assets Module
 

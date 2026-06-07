@@ -56,6 +56,28 @@ Windows 可以复制到：
 
 默认助理名为「小智」。小智会使用中文产物，关键方案先确认；如果中途打断或改方向，会记录状态并把流程带回正轨。
 
+## 门禁与自动化边界
+
+SDD Delivery 的门禁是 AI agent 的工作协议，不是强制拦截所有文件写入的运行时沙箱。它通过产物、checkpoint、审查记录和用户确认来约束流程：
+
+- 方案确认：`04-tech-solution.md` 完成后先确认架构、技术栈和实现方向，再进入任务拆分。
+- TDD 门禁：先写测试并记录 RED 证据，再进入实现；脚本可辅助扫描覆盖关系，但不能替代真实测试判断。
+- 逐任务审查：每个任务后检查边界、测试、实现日志和 checkpoint。
+- 无 Python 模式：脚本是加速器和校验助手；没有 Python 时，AI 应手动维护 Markdown / JSON 产物。
+
+这个 skill 提供的是可审查的交付约束和可恢复的证据链，不是硬执行引擎。
+
+## 人机协同审查
+
+每个 feature 目录都能脱离聊天记录被人工审查：
+
+- `11-checkpoint.json`：机器可恢复的状态事实源
+- `12-observability.md`：人工可读的进度与质量面板
+- `13-dashboard.html`：可选静态业务看板
+- `events.jsonl`：追加式过程流水
+
+默认里程碑：M1 需求基线、M2 方案确认、M3 实现受控、M4 验证完成、M5 交付就绪。人工审查结论会写入 checkpoint 的 `human_reviews` 和 `milestones`，并同步展示在 `12-observability.md`。
+
 ## 视觉概览
 
 ![SDD Delivery Hero](assets/images/sdd-delivery-hero.png)
@@ -102,10 +124,32 @@ python scripts/parse_prd_to_spec.py prd.md .sdd-delivery/login-rate-limit --forc
 python scripts/trace_coverage.py .sdd-delivery/login-rate-limit
 python scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-report --update-trace
 python scripts/sync_observability.py .sdd-delivery/login-rate-limit
+python scripts/generate_dashboard.py .sdd-delivery/login-rate-limit
 python scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
 python scripts/manage_capabilities.py .sdd-delivery/login-rate-limit --project-root . --detect --plan
+python scripts/record_mcp_discovery.py .sdd-delivery/login-rate-limit --enable-capability --source "Codex MCP tools"
 python scripts/setup_team_rules.py --root . --init
 ```
+
+## MCP 支持
+
+启用“组件协议支持”后，skill 会维护 MCP 证据链：
+
+- `mcp-discovery.json`：记录 MCP server、tool、component 和不可用项
+- `mcp-component-selection.md`：记录选择理由、fallback 决策和集成验证
+- `12-observability.md`：展示 MCP 状态和证据文件
+
+不同 agent 可以用自己的 MCP 调用方式发现能力，再通过脚本或手工方式写入这些产物。
+
+## 版本历史
+
+| 版本 | 日期 | 重点变化 |
+|---|---|---|
+| v0.3.0 | 2026-06 | 方案确认门禁、可插拔能力开关、团队规则、语言偏好、中断恢复、人机协同里程碑和质量看板。 |
+| v0.2.x | 2026-06 | 完整 Spec-first 产物链：PRD、Spec、审查、方案、任务、实现日志、单测、交付审查、checkpoint 和 observability。 |
+| v0.1.x | 2026-06 | 初始 skill 结构、模板、参考文档、脚本和插件包装。 |
+
+改动用户可见行为、产物结构、脚本参数或协作流程时，需要同步更新本节。
 
 ## 设计参考
 
@@ -113,6 +157,8 @@ python scripts/setup_team_rules.py --root . --init
 ## English
 
 SDD Delivery is a Spec-first delivery skill for AI coding agents. Users do not need to remember script commands. They can send a PRD or choose a workflow stage, and the agent maintains the delivery artifacts.
+
+It does not jump directly from PRD to code. It turns delivery into reviewable, traceable, recoverable steps with explicit solution approval, TDD evidence, per-task review, checkpoints, and observable artifacts.
 
 ## Installation
 
@@ -138,13 +184,67 @@ Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation 
 Recommended menu:
 
 ```text
-SDD Delivery stages:
-1. PRD to Spec   2. Clarify       3. Spec Review   4. Analyze
-5. Solution      6. Solution Rev  7. Task Split    8. Implement
-9. Unit Test     10. Delivery Rev 11. Checkpoint
+Stage menu
+  1. PRD to Spec
+  2. Clarify Requirements
+  3. Spec Review
+  4. Consistency Analysis
+  5. Technical Solution
+  6. Solution Review
+  7. Task Split
+  8. Implementation
+  9. Unit Test
+  10. Delivery Review
+  11. Checkpoint / Handoff
 
 Send a PRD or reply with a number.
 ```
+
+The default guided assistant is named **小智**. It confirms architecture and technology-stack decisions before implementation and records state before resuming after interruptions.
+
+## Gate and Automation Boundaries
+
+SDD Delivery gates are an agent workflow contract, not a runtime sandbox. The skill constrains work through artifacts, checkpoint state, review records, and explicit user confirmation:
+
+- Solution approval: pause after `04-tech-solution.md`, ask for approval, and record the result in `11-checkpoint.json`.
+- TDD gate: create tests first and record RED evidence before implementation; scripts can scan `SPEC-*` coverage but cannot replace real test judgment.
+- Per-task review: check boundaries, tests, implementation log, and checkpoint after each task.
+- No Python mode: scripts are accelerators and validation helpers; without Python, maintain the same Markdown / JSON artifacts manually.
+
+The skill provides reviewable delivery constraints and a recoverable evidence trail. It is not a hard enforcement engine.
+
+## Human-in-the-Loop Review
+
+Each feature folder can be reviewed without chat history:
+
+- `11-checkpoint.json`: machine-readable state source for recovery
+- `12-observability.md`: human-readable progress and quality dashboard
+- `13-dashboard.html`: optional static business dashboard
+- `events.jsonl`: append-only process log
+
+Default milestones: M1 Requirements Baseline, M2 Solution Approval, M3 Controlled Implementation, M4 Verification Complete, and M5 Delivery Ready. Human review decisions are recorded in checkpoint `human_reviews` and `milestones`, then rendered into `12-observability.md`.
+
+## Core Capabilities
+
+1. PRD to Spec — convert PRDs into reviewable Specs and trace matrices
+2. Clarify Requirements — scan ambiguity categories and ask focused questions
+3. Spec Review — check completeness, testability, and boundaries
+4. Consistency Analysis — detect duplication, ambiguity, underspecification, and principle conflicts
+5. Technical Solution — design from repo evidence with pre-mortem risks
+6. Solution Review — review architecture, compatibility, security, performance, rollback, and verification
+7. Task Split — create bounded, traceable implementation tasks
+8. Implementation — follow TDD evidence and per-task review
+9. Unit Test — maintain test plan, test report, and reverse SPEC-* coverage
+10. Delivery Review — verify boundaries, trace coverage, and security audit results
+11. Checkpoint / Handoff — save structured state for interruption recovery
+
+## v0.3 Workflow Enhancements
+
+- Solution approval gate before task splitting and implementation.
+- Optional capabilities for frontend templates, Java modular projects, MCP component protocol, GitHub delivery assets, and team code principles.
+- Capability switches with `enabled`, `disabled`, and `ask` states recorded in checkpoint.
+- Language preference inference for Chinese, English, or bilingual artifacts.
+- Interrupt recovery protocol for questions, scope changes, solution changes, and stop requests.
 
 ## Optional Scripts
 
@@ -153,8 +253,35 @@ Scripts are optional accelerators:
 ```bash
 python scripts/init_artifacts.py login-rate-limit
 python scripts/parse_prd_to_spec.py prd.md .sdd-delivery/login-rate-limit --force
+python scripts/trace_coverage.py .sdd-delivery/login-rate-limit
+python scripts/scan_test_coverage.py . .sdd-delivery/login-rate-limit --update-report --update-trace
+python scripts/sync_observability.py .sdd-delivery/login-rate-limit
+python scripts/generate_dashboard.py .sdd-delivery/login-rate-limit
 python scripts/validate_artifacts.py .sdd-delivery/login-rate-limit
+python scripts/manage_capabilities.py .sdd-delivery/login-rate-limit --project-root . --detect --plan
+python scripts/record_mcp_discovery.py .sdd-delivery/login-rate-limit --enable-capability --source "Codex MCP tools"
+python scripts/setup_team_rules.py --root . --init
 ```
+
+## MCP Support
+
+When component protocol support is enabled, the skill maintains MCP evidence:
+
+- `mcp-discovery.json`: MCP servers, tools, components, and unavailable capabilities
+- `mcp-component-selection.md`: selection rationale, fallback decisions, and integration verification
+- `12-observability.md`: MCP status and evidence-file links
+
+Different agents can discover MCP capabilities through their own environment, then record the result through the script or manual artifacts.
+
+## Version History
+
+| Version | Date | Highlights |
+|---|---|---|
+| v0.3.0 | 2026-06 | Solution approval gate, pluggable capability switches, team rules, language preferences, interrupt recovery, human-review milestones, and quality dashboards. |
+| v0.2.x | 2026-06 | Full Spec-first artifact chain: PRD, Spec, reviews, solution, tasks, implementation log, unit tests, delivery review, checkpoint, and observability. |
+| v0.1.x | 2026-06 | Initial skill structure, templates, reference docs, scripts, and plugin packaging. |
+
+Update this section when user-visible behavior, artifact shape, script arguments, or collaboration workflow changes.
 
 
 ## Design References

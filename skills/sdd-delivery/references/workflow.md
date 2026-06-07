@@ -75,11 +75,27 @@ When resuming from a checkpoint:
 
 The feature folder should explain current state without chat history:
 
+- Which milestone is current and which milestone evidence files are ready for human review.
 - What PRD items exist and their clarify status.
 - Which Spec items cover them and their review status.
 - Which solution sections implement them.
 - Which tasks changed code and their review status.
 - Which unit tests cover acceptance criteria.
+- Which human reviews have happened and what was accepted, rejected, or left open.
 - Which risks remain open.
 - Which gates are passed, accepted-risk, or blocked.
 - What the next action is.
+
+## Human Review Milestones
+
+Use these milestones as reviewable handoff points for human-machine collaboration. They summarize the 14 phases into checkpoints a reviewer can inspect without reading the entire chat.
+
+| Milestone | Review Meaning | Evidence Files | Required Before |
+|---|---|---|---|
+| M1 需求基线 | PRD, clarification, Spec, and consistency analysis are reviewable | `00-prd.md`, `01-spec.md`, `02-spec-review.md`, `03-requirement-trace.md` | Technical solution |
+| M2 方案确认 | Architecture, stack, risk, rollback, and security review are accepted | `04-tech-solution.md`, `05-solution-review.md`, `11-checkpoint.json` | Task split / implementation |
+| M3 实现受控 | Tasks are bounded and implementation progress is reviewable | `06-implementation-tasks.md`, `07-implementation-log.md` | Declaring implementation complete |
+| M4 验证完成 | Unit test plan and report provide enough evidence | `08-unit-test-plan.md`, `09-unit-test-report.md`, coverage files if present | Delivery review |
+| M5 交付就绪 | Final review, risk posture, and next action are clear | `10-delivery-review.md`, `11-checkpoint.json`, `12-observability.md` | Handoff / release |
+
+Update milestone status in `11-checkpoint.json`, then run or manually perform `sync_observability.py` so `12-observability.md` becomes the human-facing progress and quality dashboard.

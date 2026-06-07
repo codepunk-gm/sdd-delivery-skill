@@ -49,6 +49,9 @@ Required top-level fields:
     "source": "",
     "time": ""
   },
+  "milestones": [],
+  "human_reviews": [],
+  "quality_status": {},
   "decisions": [],
   "repo_facts": [],
   "changed_files": [],
@@ -114,6 +117,52 @@ Solution approval object:
   "notes": "",
   "source": "",
   "time": ""
+}
+```
+
+Milestone object:
+
+```json
+{
+  "id": "M1",
+  "name": "需求基线",
+  "status": "pending|in_review|reviewed|accepted_risk|blocked",
+  "gates": ["clarify", "spec", "spec_review", "analyze"],
+  "evidence": ["00-prd.md", "01-spec.md"],
+  "reviewer": "",
+  "updated_at": ""
+}
+```
+
+Default milestones:
+
+- `M1 需求基线` — PRD, clarification, Spec, Spec review, and analysis are ready for review.
+- `M2 方案确认` — technical solution, solution approval, and solution review are ready for review.
+- `M3 实现受控` — task split and implementation log show bounded progress.
+- `M4 验证完成` — unit test plan and report provide verification evidence.
+- `M5 交付就绪` — delivery review, checkpoint, and observability support handoff.
+
+Human review object:
+
+```json
+{
+  "time": "",
+  "reviewer": "",
+  "target": "M1|M2|M3|M4|M5|artifact path|task id",
+  "result": "pass|changes_requested|accepted_risk|blocked",
+  "notes": ""
+}
+```
+
+Quality status object:
+
+```json
+{
+  "progress": "pending|on_track|at_risk|blocked",
+  "traceability": "pending|sufficient|gap|blocked",
+  "test_evidence": "pending|sufficient|gap|blocked",
+  "review_readiness": "pending|ready|changes_requested|blocked",
+  "delivery_confidence": "pending|high|medium|low|blocked"
 }
 ```
 

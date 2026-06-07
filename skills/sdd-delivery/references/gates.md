@@ -2,6 +2,10 @@
 
 A gate does not mean no progress. A gate means unresolved risk must be visible and accepted before progress.
 
+Gates are enforced by agent behavior and artifact evidence. They are not OS-level or editor-level guards. The agent must stop at a gate, collect or create the required evidence, update the relevant artifact/checkpoint, and only proceed when the gate is `passed` or the user explicitly accepts the risk.
+
+Bundled scripts can validate structure, calculate coverage, scan `SPEC-*` references, and refresh observability. They cannot prove product correctness, replace real test execution, or silently approve architecture and technology choices.
+
 ## Gate State Machine
 
 ```

@@ -23,12 +23,17 @@ It combines:
 - parallel task markers for independent work
 - explicit user approval of solution and technology stack before implementation
 - optional pluggable capabilities with `enabled|disabled|ask` switches for frontend templates, Java modular projects, MCP components, and team rules
+- MCP discovery and component-selection evidence artifacts when component protocol support is enabled
 - unit test planning and execution
 - deterministic checkpoint recovery
 - observable delivery metrics
+- human-reviewable milestones for progress and quality control
+- static HTML dashboard generation for business-friendly review
 - trace coverage calculation
 - reverse test-to-Spec coverage scanning
 - GitHub PR template and CI artifact validation assets
+
+Gate enforcement is an agent workflow contract, not a runtime sandbox. Enforce gates by stopping at the required point, recording evidence in artifacts/checkpoint, asking for user confirmation when required, and refusing to claim completion when evidence is missing. Scripts are accelerators and validators; they do not replace agent judgment or real test execution.
 
 ## Constitution
 
@@ -98,6 +103,10 @@ Do not skip these gates unless the user explicitly overrides them:
 
 See `references/gates.md` for the gate state machine and blocked-gate protocol.
 
+Gate evidence must be artifact-backed. For TDD, record the test file, command, RED result, implementation change, and GREEN result. For per-task review, record boundary verification, changed files, test status, and checkpoint update. For solution approval, record the user's decision in `11-checkpoint.json`.
+
+Human-in-the-loop control is part of the workflow. Maintain milestones in `11-checkpoint.json`, render them in `12-observability.md`, and record human reviews when a reviewer checks progress, quality, or evidence files. The five milestone checkpoints are: M1 需求基线, M2 方案确认, M3 实现受控, M4 验证完成, and M5 交付就绪.
+
 ## Non-negotiable rules
 
 - Follow project instructions and architecture.
@@ -112,6 +121,7 @@ See `references/gates.md` for the gate state machine and blocked-gate protocol.
 - At startup, infer or ask for artifact language preference, then record it in checkpoint preferences.
 - At startup, offer team-rule setup; users may configure or skip it.
 - Before phases with optional extension points, read `references/capability-registry.md` and apply capability switches from checkpoint.
+- When MCP component protocol support is enabled, record discovery and selection evidence in `mcp-discovery.json` and `mcp-component-selection.md` before hand-building a replacement.
 - When discussing optional capabilities with the user, use user-facing names and benefits; hide internal adapter/executor terminology unless asked.
 - Do not modify unrelated files. Boundary violations are P0 rejections.
 - Do not treat stale code facts as durable memory.
@@ -201,6 +211,8 @@ See `references/gates.md` for the gate state machine and blocked-gate protocol.
 
 ### 14. Checkpoint and Observability
 - Update `11-checkpoint.json`, `12-observability.md`, and `events.jsonl` before stop, compact, or handoff.
+- Refresh milestone status, human review records, and quality status so a reviewer can understand progress without chat history.
+- When a human-readable review surface is useful, generate `13-dashboard.html` from the artifact state. Treat it as a generated view, not as the source of truth.
 - Refs: `references/context-policy.md`, `references/checkpoint-schema.md`
 
 ## Required artifacts

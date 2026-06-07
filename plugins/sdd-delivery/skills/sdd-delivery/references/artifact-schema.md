@@ -126,6 +126,15 @@ Required fields:
   "repo_facts": [{"fact": "", "source": "", "staleness": "fresh"}],
   "changed_files": [],
   "tests_run": [{"command": "", "status": "passed|failed|skipped", "summary": "", "source": ""}],
+  "milestones": [{"id": "M1", "name": "需求基线", "status": "pending", "evidence": []}],
+  "human_reviews": [{"time": "", "reviewer": "", "target": "", "result": "", "notes": ""}],
+  "quality_status": {
+    "progress": "pending",
+    "traceability": "pending",
+    "test_evidence": "pending",
+    "review_readiness": "pending",
+    "delivery_confidence": "pending"
+  },
   "gate_status": {
     "clarify": "pending",
     "spec": "pending",
@@ -151,9 +160,43 @@ Required fields:
 
 Required sections:
 - `## Dashboard` — metrics table (PRD items, Spec items, tasks, tests, coverage, risks, blockers)
+- `## Quality Status` — progress, traceability, test evidence, review readiness, delivery confidence
+- `## MCP Evidence` — MCP capability state, discovery status, item counts, and evidence-file links
+- `## Milestones` — M1-M5 human-reviewable checkpoints, evidence files, reviewer, status
+- `## Human Reviews` — chronological review records from humans or delegated reviewers
 - `## Gate History` — chronological list of gate evaluations
 - `## Commands Run` — significant commands and their outcomes
 - `## Current Status` — brief summary and next action
+
+## mcp-discovery.json
+
+Optional but required when `capabilities.mcp_component_protocol.state` is `enabled`.
+
+Required fields:
+```json
+{
+  "schema_version": "1.0",
+  "feature": "",
+  "status": "not_started|available|partial|unavailable",
+  "discovered_at": "",
+  "source": "",
+  "servers": [],
+  "tools": [],
+  "components": [],
+  "unavailable": [],
+  "notes": ""
+}
+```
+
+## mcp-component-selection.md
+
+Optional but required when `capabilities.mcp_component_protocol.state` is `enabled`.
+
+Required sections:
+- `## 发现摘要` — discovered MCP servers, tools, components, or unavailable capabilities
+- `## 选择决策` — selected tool/component and rationale
+- `## Fallback 记录` — fallback decision and user confirmation when MCP is unavailable
+- `## 集成验证` — invocation, render, integration, or fallback verification evidence
 
 ## events.jsonl
 
@@ -163,3 +206,21 @@ Format: one JSON object per line:
 ```
 
 Append-only. Never modify existing lines.
+
+## 13-dashboard.html
+
+Optional generated artifact for human review.
+
+Generated from:
+- `11-checkpoint.json`
+- `12-observability.md` inputs
+- `mcp-discovery.json` when present
+- `events.jsonl`
+- known artifact files
+
+Required qualities:
+- Static single-file HTML.
+- No external network dependencies.
+- Escapes user-controlled text.
+- Links back to evidence files in the same feature folder.
+- Must not become the source of truth; regenerate from Markdown/JSON artifacts.

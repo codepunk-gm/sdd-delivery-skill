@@ -66,6 +66,61 @@
     "source": "",
     "time": ""
   },
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "需求基线",
+      "status": "pending",
+      "gates": ["clarify", "spec", "spec_review", "analyze"],
+      "evidence": ["00-prd.md", "01-spec.md", "02-spec-review.md", "03-requirement-trace.md"],
+      "reviewer": "",
+      "updated_at": ""
+    },
+    {
+      "id": "M2",
+      "name": "方案确认",
+      "status": "pending",
+      "gates": ["solution", "solution_approval", "solution_review"],
+      "evidence": ["04-tech-solution.md", "05-solution-review.md"],
+      "reviewer": "",
+      "updated_at": ""
+    },
+    {
+      "id": "M3",
+      "name": "实现受控",
+      "status": "pending",
+      "gates": ["tdd", "per_task_review"],
+      "evidence": ["06-implementation-tasks.md", "07-implementation-log.md"],
+      "reviewer": "",
+      "updated_at": ""
+    },
+    {
+      "id": "M4",
+      "name": "验证完成",
+      "status": "pending",
+      "gates": ["unit_test_plan", "test_report"],
+      "evidence": ["08-unit-test-plan.md", "09-unit-test-report.md"],
+      "reviewer": "",
+      "updated_at": ""
+    },
+    {
+      "id": "M5",
+      "name": "交付就绪",
+      "status": "pending",
+      "gates": ["delivery_review"],
+      "evidence": ["10-delivery-review.md", "11-checkpoint.json", "12-observability.md"],
+      "reviewer": "",
+      "updated_at": ""
+    }
+  ],
+  "human_reviews": [],
+  "quality_status": {
+    "progress": "pending",
+    "traceability": "pending",
+    "test_evidence": "pending",
+    "review_readiness": "pending",
+    "delivery_confidence": "pending"
+  },
   "decisions": [],
   "repo_facts": [],
   "changed_files": [],

@@ -37,6 +37,9 @@ REQUIRED_CHECKPOINT_FIELDS = [
     "capabilities",
     "preferences",
     "solution_approval",
+    "milestones",
+    "human_reviews",
+    "quality_status",
     "decisions",
     "repo_facts",
     "changed_files",
@@ -57,6 +60,8 @@ REQUIRED_CAPABILITIES = [
 ]
 
 CAPABILITY_STATES = {"enabled", "disabled", "ask"}
+REQUIRED_MILESTONES = ["M1", "M2", "M3", "M4", "M5"]
+REQUIRED_QUALITY_FIELDS = ["progress", "traceability", "test_evidence", "review_readiness", "delivery_confidence"]
 
 REQUIRED_GATES = [
     "clarify",
@@ -98,6 +103,13 @@ def main() -> int:
         else:
             status[name] = "ok"
 
+    dashboard_path = folder / "13-dashboard.html"
+    if dashboard_path.exists():
+        if not non_empty(dashboard_path):
+            issues.append("empty file: 13-dashboard.html")
+        else:
+            status["13-dashboard.html"] = "ok"
+
     checkpoint_path = folder / "11-checkpoint.json"
     checkpoint = {}
     if checkpoint_path.exists():
@@ -136,6 +148,39 @@ def main() -> int:
                     )
                     if sorted(enabled_index) != structured_enabled:
                         warnings.append("enabled_capabilities index does not match capabilities states")
+            milestones = checkpoint.get("milestones", [])
+            if not isinstance(milestones, list):
+                issues.append("checkpoint milestones must be a list")
+            else:
+                milestone_ids = {item.get("id") for item in milestones if isinstance(item, dict)}
+                for milestone_id in REQUIRED_MILESTONES:
+                    if milestone_id not in milestone_ids:
+                        issues.append(f"checkpoint missing milestone: {milestone_id}")
+            if not isinstance(checkpoint.get("human_reviews", []), list):
+                issues.append("checkpoint human_reviews must be a list")
+            quality_status = checkpoint.get("quality_status", {})
+            if not isinstance(quality_status, dict):
+                issues.append("checkpoint quality_status must be an object")
+            else:
+                for field in REQUIRED_QUALITY_FIELDS:
+                    if field not in quality_status:
+                        issues.append(f"checkpoint missing quality status: {field}")
+            mcp_switch = checkpoint.get("capabilities", {}).get("mcp_component_protocol", {})
+            if isinstance(mcp_switch, dict) and mcp_switch.get("state") == "enabled":
+                for name in ["mcp-discovery.json", "mcp-component-selection.md"]:
+                    path = folder / name
+                    if not path.exists():
+                        issues.append(f"missing MCP evidence file: {name}")
+                    elif not non_empty(path):
+                        issues.append(f"empty MCP evidence file: {name}")
+                discovery_path = folder / "mcp-discovery.json"
+                if discovery_path.exists():
+                    discovery = json.loads(discovery_path.read_text(encoding="utf-8-sig"))
+                    if "status" not in discovery:
+                        issues.append("mcp-discovery missing field: status")
+                    for field in ["servers", "tools", "components", "unavailable"]:
+                        if field not in discovery:
+                            issues.append(f"mcp-discovery missing field: {field}")
         except json.JSONDecodeError as exc:
             issues.append(f"checkpoint invalid json: {exc}")
 

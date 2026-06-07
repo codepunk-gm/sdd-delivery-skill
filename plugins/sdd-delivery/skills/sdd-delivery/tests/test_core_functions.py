@@ -13,8 +13,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts._utils import is_filled, parse_markdown_table, parse_markdown_table_file, safe_feature_name
 from scripts.parse_prd_to_spec import extract_items
 from scripts.scan_test_coverage import is_test_file
-from scripts.write_checkpoint import default_checkpoint, load_checkpoint_or_default, normalize_capabilities, set_capability
+from scripts.write_checkpoint import (
+    add_human_review,
+    default_checkpoint,
+    load_checkpoint_or_default,
+    normalize_capabilities,
+    set_capability,
+    set_milestone,
+    set_quality,
+)
 from scripts.manage_capabilities import executor_plan, load_registry
+from scripts.generate_dashboard import render_dashboard
+from scripts.record_mcp_discovery import load_discovery, parse_record, render_selection
 from scripts.setup_team_rules import default_rules, validate_rules
 
 
@@ -251,6 +261,27 @@ class TestCheckpointDefaults(unittest.TestCase):
         self.assertIn("preferences", checkpoint)
         self.assertIn("solution_approval", checkpoint)
 
+    def test_default_checkpoint_has_human_coordination_fields(self):
+        checkpoint = default_checkpoint(Path("feature-human-review"))
+
+        self.assertEqual([item["id"] for item in checkpoint["milestones"]], ["M1", "M2", "M3", "M4", "M5"])
+        self.assertIn("human_reviews", checkpoint)
+        self.assertEqual(checkpoint["quality_status"]["progress"], "pending")
+        self.assertEqual(checkpoint["quality_status"]["delivery_confidence"], "pending")
+
+    def test_human_review_updates_checkpoint(self):
+        checkpoint = default_checkpoint(Path("feature-human-review"))
+
+        set_milestone(checkpoint, "M2=reviewed:老板:方案可进入实现")
+        add_human_review(checkpoint, "老板::M2::pass::方案和风险已确认")
+        set_quality(checkpoint, "review_readiness=ready")
+
+        milestone = next(item for item in checkpoint["milestones"] if item["id"] == "M2")
+        self.assertEqual(milestone["status"], "reviewed")
+        self.assertEqual(milestone["reviewer"], "老板")
+        self.assertTrue(any(review["target"] == "M2" for review in checkpoint["human_reviews"]))
+        self.assertEqual(checkpoint["quality_status"]["review_readiness"], "ready")
+
     def test_legacy_enabled_capabilities_migrate_to_structured_switches(self):
         checkpoint = default_checkpoint(Path("feature-c"))
         checkpoint["enabled_capabilities"] = ["frontend_template"]
@@ -297,6 +328,95 @@ class TestCapabilityRegistry(unittest.TestCase):
         plan = executor_plan(checkpoint, registry)
 
         self.assertEqual([item["id"] for item in plan], ["frontend_template"])
+
+
+class TestMcpDiscovery(unittest.TestCase):
+    """Tests for MCP discovery evidence helpers."""
+
+    def test_parse_record_supports_name_source_status_notes(self):
+        record = parse_record("DataTable::design-system::available::Use for dashboard", "component")
+
+        self.assertEqual(record["name"], "DataTable")
+        self.assertEqual(record["source"], "design-system")
+        self.assertEqual(record["status"], "available")
+        self.assertEqual(record["notes"], "Use for dashboard")
+        self.assertEqual(record["type"], "component")
+
+    def test_load_discovery_defaults_when_missing(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            folder = Path(temp_dir) / "feature-mcp"
+            folder.mkdir()
+            discovery = load_discovery(folder)
+
+        self.assertEqual(discovery["feature"], "feature-mcp")
+        self.assertEqual(discovery["status"], "not_started")
+        self.assertEqual(discovery["servers"], [])
+
+    def test_render_selection_includes_discovered_component(self):
+        discovery = {
+            "servers": [],
+            "tools": [],
+            "components": [parse_record("DataTable::design-system::available::Use for dashboard", "component")],
+            "unavailable": [],
+        }
+
+        text = render_selection(discovery)
+
+        self.assertIn("DataTable", text)
+        self.assertIn("## 选择决策", text)
+
+
+class TestDashboardGeneration(unittest.TestCase):
+    """Tests for static dashboard generation."""
+
+    def test_dashboard_renders_checkpoint_and_escapes_html(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            folder = Path(temp_dir) / "feature-dashboard"
+            folder.mkdir()
+            checkpoint = default_checkpoint(folder)
+            checkpoint["feature"] = "feature-dashboard"
+            checkpoint["goal"] = "<script>alert(1)</script>"
+            checkpoint["current_phase"] = "technical-solution"
+            checkpoint["next_action"] = "Review solution"
+            (folder / "11-checkpoint.json").write_text(
+                __import__("json").dumps(checkpoint, ensure_ascii=False),
+                encoding="utf-8",
+            )
+
+            html = render_dashboard(folder)
+
+        self.assertIn("SDD Delivery Dashboard", html)
+        self.assertIn("feature-dashboard", html)
+        self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", html)
+        self.assertNotIn("<script>alert(1)</script>", html)
+
+    def test_dashboard_includes_mcp_evidence(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            folder = Path(temp_dir) / "feature-dashboard-mcp"
+            folder.mkdir()
+            checkpoint = default_checkpoint(folder)
+            set_capability(checkpoint, "mcp_component_protocol=enabled")
+            (folder / "11-checkpoint.json").write_text(
+                __import__("json").dumps(checkpoint, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            (folder / "mcp-discovery.json").write_text(
+                __import__("json").dumps({
+                    "status": "available",
+                    "source": "test",
+                    "servers": [{"name": "design-system"}],
+                    "tools": [],
+                    "components": [{"name": "DataTable"}],
+                    "unavailable": [],
+                }, ensure_ascii=False),
+                encoding="utf-8",
+            )
+
+            html = render_dashboard(folder)
+
+        self.assertIn("MCP Evidence", html)
+        self.assertIn("available", html)
+        self.assertIn("2", html)
 
 
 class TestTeamRules(unittest.TestCase):

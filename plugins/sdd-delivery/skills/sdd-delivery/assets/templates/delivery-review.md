@@ -39,6 +39,26 @@
 - 跳过：N（全部有原因）
 - 未覆盖 Spec 条目：N（全部有已接受缺口）
 
+## 人机协同审查
+
+| 里程碑 | 状态 | 人工审查人 | 证据文件 | 结论 |
+|---|---|---|---|---|
+| M1 需求基线 | pending | | 00-prd.md, 01-spec.md, 02-spec-review.md, 03-requirement-trace.md | |
+| M2 方案确认 | pending | | 04-tech-solution.md, 05-solution-review.md | |
+| M3 实现受控 | pending | | 06-implementation-tasks.md, 07-implementation-log.md | |
+| M4 验证完成 | pending | | 08-unit-test-plan.md, 09-unit-test-report.md | |
+| M5 交付就绪 | pending | | 10-delivery-review.md, 11-checkpoint.json, 12-observability.md | |
+
+## 质量把控摘要
+
+| 维度 | 状态 | 证据 | 备注 |
+|---|---|---|---|
+| 进度 | pending | 12-observability.md | |
+| 可追踪性 | pending | 03-requirement-trace.md | |
+| 测试证据 | pending | 08-unit-test-plan.md, 09-unit-test-report.md | |
+| 审查就绪 | pending | 02-spec-review.md, 05-solution-review.md, 10-delivery-review.md | |
+| 交付信心 | pending | 全部产物 + open risks/blockers | |
+
 ## 安全审计
 
 | # | 分类 | 问题 | 严重级别 | 建议修复 | 状态 |
