@@ -30,7 +30,7 @@ python scripts/setup_team_rules.py --root . --language zh --test-framework pytes
 python scripts/setup_team_rules.py --root . --validate
 ```
 
-The generated file is `.sdd-delivery/team-rules.json`. It is the project-level configuration for language, test framework, code principle modules, thresholds, naming glossary, and review defaults.
+The generated file is `.sdd-delivery/team-rules.json`. It is the project-level configuration for language, test framework, code principle modules, SQL standards, thresholds, naming glossary, and review defaults.
 
 If the user chooses quick configuration, ask at most 3 questions:
 
@@ -91,6 +91,78 @@ code_principles:
     allowed_abbreviations: [ctx, cfg, repo, svc]  # team glossary
     boolean_prefix: [is, has, should, can, allow]  # custom prefixes
 ```
+
+### SQL Standards
+
+Maintain SQL rules in `.sdd-delivery/team-rules.json` under `sql_standards`. SQL rules are not one-off chat preferences; they are reviewable team assets.
+
+Use three levels:
+
+1. `global` — default team-wide SQL rules used by all projects.
+2. `project_overrides` — current project specifics such as dialect, schema, table prefix, migration tool, or legacy exceptions.
+3. `feature_exceptions` — narrow, temporary exceptions for the current feature. Every exception needs a rule, reason, approver, expiration condition, and preferably a scope.
+
+Effective priority:
+
+```text
+global < project_overrides < feature_exceptions
+```
+
+Default SQL checks include:
+
+- no `SELECT *` in production queries
+- parameterized queries only; no string-concatenated SQL
+- pagination needs `LIMIT` and deterministic `ORDER BY`
+- filter/join columns need an index plan
+- schema changes need migration, backfill, rollback, and approval for destructive changes
+- multi-write flows need explicit transaction boundaries
+
+Common commands:
+
+```bash
+python scripts/setup_team_rules.py --root . --sql-enabled true
+python scripts/setup_team_rules.py --root . --sql-dialect postgresql --sql-schema billing --sql-table-prefix biz_ --sql-migration-tool alembic
+python scripts/setup_team_rules.py --root . --sql-rule query.forbid_select_star=false
+python scripts/setup_team_rules.py --root . --sql-allow-legacy "legacy_order::table_case::Existing table managed by upstream ERP"
+python scripts/setup_team_rules.py --root . --sql-feature-exception "require_index_for_filter_columns::SPEC-3 export audit query::One-time admin export over small archival table::tech lead::Remove after archival table reaches 100k rows"
+python scripts/setup_team_rules.py --root . --validate
+```
+
+Example project override:
+
+```json
+{
+  "sql_standards": {
+    "project_overrides": {
+      "dialect": "postgresql",
+      "schema": "billing",
+      "table_prefix": "biz_",
+      "migration_tool": "alembic",
+      "allowed_legacy_exceptions": [
+        {
+          "object": "legacy_order",
+          "rule": "table_case",
+          "reason": "Existing table managed by upstream ERP"
+        }
+      ]
+    }
+  }
+}
+```
+
+Example feature exception:
+
+```json
+{
+  "rule": "require_index_for_filter_columns",
+  "scope": "SPEC-3 export audit query",
+  "reason": "One-time admin export over small archival table",
+  "approver": "tech lead",
+  "expires": "Remove after archival table reaches 100k rows"
+}
+```
+
+When SQL is touched, apply SQL standards during Technical Solution, Implementation Tasks, Per-Task Review, and Delivery Review. If a project override conflicts with global rules, record the reason. If a feature exception is needed, ask for confirmation before implementation.
 
 ### Code Style
 - Language-specific conventions (PEP 8, ESLint, gofmt, etc.)

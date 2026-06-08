@@ -8,7 +8,7 @@ Optional capability modules extend SDD Delivery at specific workflow nodes. User
 |---|---|---|
 | `frontend_template` | 前端模板保护 | 识别内置模板和组件目录，避免误改，并补充 UI 验证 |
 | `java_modular_project` | Java 模块边界保护 | 识别模块边界和依赖方向，避免跨模块乱改 |
-| `mcp_component_protocol` | 组件协议支持 | 优先通过 MCP / 组件协议选择现有组件，而不是手写替代 |
+| `mcp_component_protocol` | 企业 MCP 能力复用 | 实现前通过 MCP 查询企业内部可复用能力，优先复用现有工具、资源、组件、服务、API 或 SDK |
 | `github_delivery_assets` | GitHub 交付资产 | 生成或检查 PR 模板、CI 校验和交付清单 |
 | `team_code_principles` | 团队代码原则 | 启用设计模式、扩展性、长度限制、命名和错误处理审查 |
 
@@ -71,7 +71,7 @@ Enabled executors are recorded in checkpoint `capability_executor_plan`.
 |---|---|---|---|
 | `frontend_template` | `package.json`, `vite.config.*`, `next.config.*`, `src/components/`, `app/`, `pages/` | Technical Solution or Implementation Tasks | Template/file inventory, UI verification expectations, screenshot/test checklist |
 | `java_modular_project` | `pom.xml`, `build.gradle*`, `settings.gradle*`, `src/main/java`, multi-module folders | Technical Solution | Module boundary map, dependency direction checks, package-level task boundaries |
-| `mcp_component_protocol` | MCP server config, component MCP tool references, design-system MCP, user mentions MCP components | Technical Solution or Implementation | MCP discovery step, component selection evidence, fallback if MCP is unavailable |
+| `mcp_component_protocol` | MCP server config, MCP tool/resource references, design-system MCP, internal API MCP, SDK MCP, scaffold MCP, knowledge-base MCP, user mentions enterprise MCP capabilities | Technical Solution and before Implementation | Enterprise capability discovery step, selection evidence, reuse/fallback decision before hand-building alternatives |
 | `github_delivery_assets` | User asks for PR/CI assets or repo uses GitHub Actions | Delivery Review | PR template, CI artifact validation, delivery checklist |
 | `team_code_principles` | User wants team rules, code review standards, file length/parameter/design checks | Startup or Per-Task Review | Loads `references/code-principles.md` modules into Gate 9 and Gate 12 review |
 
@@ -81,7 +81,7 @@ Enabled executors are recorded in checkpoint `capability_executor_plan`.
 发现这个项目可能适合启用可插拔能力：
 
 1. frontend_template：检测到 package.json / src/components
-2. mcp_component_protocol：需求涉及 MCP 组件
+2. mcp_component_protocol：需求可能涉及企业内部能力，可先通过 MCP 查找可复用工具、资源、组件、服务、API 或 SDK
 3. team_code_principles：启用设计模式、扩展性、文件长度、参数数量等团队规则
 
 是否启用？
@@ -109,15 +109,17 @@ When enabled:
 - Prefer interface-first changes at module edges.
 - Record module dependency risks in the pre-mortem and solution review.
 
-## MCP Component Protocol Module
+## MCP Capability Reuse Module
 
 When enabled:
 
-- Discover available MCP component/tool capabilities before inventing UI components.
+- For implementation, discover available enterprise MCP tools/resources/components before inventing or hand-building alternatives.
+- Query internal MCP capabilities such as design systems, component libraries, internal APIs, SDKs, scaffolding tools, knowledge bases, platform services, or operations tools when the environment exposes them.
 - Create or update `mcp-discovery.json` and `mcp-component-selection.md` as evidence artifacts.
-- Record chosen MCP component/tool names and evidence in `04-tech-solution.md`.
-- If MCP is unavailable, document the fallback and ask before replacing it with hand-built components.
-- Add verification for rendered component states and integration points.
+- Record chosen MCP tool/resource/component names, source, usage notes, and evidence in `04-tech-solution.md`.
+- Add each selected enterprise capability to the relevant implementation task boundary, including call path, import path, endpoint, SDK method, or integration point when known.
+- If MCP is unavailable or no suitable capability exists, document the fallback and ask before replacing it with a hand-built alternative.
+- Add verification for integration points, permissions, error paths, rendered states when UI is involved, and fallback behavior.
 
 Use `python scripts/record_mcp_discovery.py .sdd-delivery/<feature> --enable-capability ...` when Python is available. In No-Python mode, create or edit the two MCP evidence files manually using the templates.
 

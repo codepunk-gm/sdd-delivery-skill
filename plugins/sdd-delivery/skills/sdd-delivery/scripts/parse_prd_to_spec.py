@@ -66,22 +66,22 @@ def main() -> int:
     trace_artifact = folder / "03-requirement-trace.md"
 
     if args.force or not prd_artifact.exists():
-        rows = ["| PRD ID | Requirement | Priority | Notes |", "|---|---|---|---|"]
+        rows = ["| PRD ID | 需求 | 优先级 | 备注 |", "|---|---|---|---|"]
         for i, item in enumerate(items, 1):
-            rows.append(f"| PRD-{i} | {item.replace('|', '/')} | Must | from {prd_path.name} |")
-        prd_artifact.write_text("# PRD\n\n## Source\n\n" + str(prd_path) + "\n\n## Business Goal\n\n\n## PRD Items\n\n" + "\n".join(rows) + "\n\n## Constraints\n\n## Unknowns\n", encoding="utf-8")
+            rows.append(f"| PRD-{i} | {item.replace('|', '/')} | 必须 | 来自 {prd_path.name} |")
+        prd_artifact.write_text("# PRD\n\n## 来源\n\n" + str(prd_path) + "\n\n## 业务目标\n\n\n## PRD 条目\n\n" + "\n".join(rows) + "\n\n## 约束\n\n## 未知项\n", encoding="utf-8")
 
     if args.force or not spec_artifact.exists():
-        rows = ["| Spec ID | PRD ID | Behavior | Acceptance Criteria | Priority |", "|---|---|---|---|---|"]
+        rows = ["| Spec ID | PRD ID | 行为 | 验收标准 | 优先级 |", "|---|---|---|---|---|"]
         for i, item in enumerate(items, 1):
-            rows.append(f"| SPEC-{i} | PRD-{i} | {item.replace('|', '/')} | TBD: observable acceptance criteria | Must |")
-        spec_artifact.write_text("# Spec\n\n## Scope\n\n\n## Spec Items\n\n" + "\n".join(rows) + "\n\n## Edge Cases\n\n## Non-Goals\n\n## Open Questions\n", encoding="utf-8")
+            rows.append(f"| SPEC-{i} | PRD-{i} | {item.replace('|', '/')} | 待补充：可观测的验收标准 | 必须 |")
+        spec_artifact.write_text("# Spec\n\n## 范围\n\n\n## Spec 条目\n\n" + "\n".join(rows) + "\n\n## 边界场景\n\n## 非目标\n\n## 待确认问题\n", encoding="utf-8")
 
     if args.force or not trace_artifact.exists():
-        rows = ["| PRD ID | Spec ID | Acceptance Criteria | Solution Section | Task ID | Code Files | Unit Tests | Status |", "|---|---|---|---|---|---|---|---|"]
+        rows = ["| PRD ID | Spec ID | 验收标准 | 方案章节 | 任务 ID | 代码文件 | 单测 | 状态 |", "|---|---|---|---|---|---|---|---|"]
         for i, _ in enumerate(items, 1):
-            rows.append(f"| PRD-{i} | SPEC-{i} | TBD | | | | | specified |")
-        trace_artifact.write_text("# Requirement Trace\n\n" + "\n".join(rows) + "\n", encoding="utf-8")
+            rows.append(f"| PRD-{i} | SPEC-{i} | 待补充 | | | | | 已规格化 |")
+        trace_artifact.write_text("# 需求追踪矩阵\n\n" + "\n".join(rows) + "\n", encoding="utf-8")
 
     update_checkpoint(folder, len(items), len(items))
     append_event(folder, "prd_parsed_to_spec", {"source": str(prd_path), "items": len(items)})

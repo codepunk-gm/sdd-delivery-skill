@@ -22,6 +22,47 @@
     "max_imports": 15
   },
   "allowed_abbreviations": ["id", "url", "api", "db", "ui"],
+  "sql_standards": {
+    "enabled": true,
+    "scope_order": ["global", "project", "feature_exception"],
+    "global": {
+      "dialect": "generic",
+      "naming": {
+        "table_case": "snake_case",
+        "column_case": "snake_case",
+        "primary_key": "id",
+        "foreign_key_suffix": "_id",
+        "index_prefix": "idx_",
+        "unique_index_prefix": "uniq_"
+      },
+      "query_rules": {
+        "forbid_select_star": true,
+        "require_parameterized_query": true,
+        "require_limit_for_pagination": true,
+        "require_order_by_for_pagination": true,
+        "require_index_for_filter_columns": true,
+        "forbid_string_concatenated_sql": true
+      },
+      "migration_rules": {
+        "migration_required_for_schema_change": true,
+        "backfill_plan_required": true,
+        "rollback_plan_required": true,
+        "avoid_destructive_change_without_approval": true
+      },
+      "transaction_rules": {
+        "explicit_transaction_for_multi_write": true,
+        "document_locking_strategy": true
+      }
+    },
+    "project_overrides": {
+      "dialect": "",
+      "schema": "",
+      "table_prefix": "",
+      "migration_tool": "",
+      "allowed_legacy_exceptions": []
+    },
+    "feature_exceptions": []
+  },
   "review": {
     "required_reviewers": 1,
     "p0_blocks_delivery": true,

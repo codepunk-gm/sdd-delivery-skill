@@ -4,8 +4,10 @@
   "status": "not_started",
   "discovered_at": "",
   "source": "",
+  "query_intent": "",
   "servers": [],
   "tools": [],
+  "resources": [],
   "components": [],
   "unavailable": [],
   "notes": ""

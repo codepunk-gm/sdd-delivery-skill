@@ -29,7 +29,7 @@
       "state_default": "ask",
       "adapter": {
         "type": "tool-discovery",
-        "signals": ["mcp", "component mcp", "design-system mcp"]
+        "signals": ["mcp", "component mcp", "design-system mcp", "internal api mcp", "sdk mcp", "scaffold mcp", "knowledge base mcp", "platform service mcp"]
       },
       "executor": {
         "type": "tool-mediated",

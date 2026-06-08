@@ -71,7 +71,7 @@ In No-Python mode, manually check each required file and field against `referenc
 
 ## record_mcp_discovery.py
 
-Records MCP server/tool/component discovery evidence and updates:
+Records enterprise MCP server/tool/resource/component discovery evidence for reusable internal capabilities and updates:
 
 - `mcp-discovery.json`
 - `mcp-component-selection.md`
@@ -84,9 +84,11 @@ Usage:
 python scripts/record_mcp_discovery.py .sdd-delivery/<feature> \
   --enable-capability \
   --source "Codex MCP tools" \
-  --server "design-system::mcp::available::Provides UI components" \
-  --tool "list_components::design-system::available::Lists available components" \
-  --component "DataTable::design-system::available::Use for dashboard table"
+  --query-intent "查找企业内部可复用的账单查询 API、数据表格组件和权限校验 SDK" \
+  --server "internal-platform::mcp::available::Provides enterprise APIs, SDKs, components, and docs" \
+  --tool "list_capabilities::internal-platform::available::Lists available internal capabilities and usage examples" \
+  --resource "BillingQueryAPI::internal-platform::available::Use for billing list queries" \
+  --component "DataTable::design-system::available::Use for dashboard table; import @company/ui/DataTable"
 ```
 
 In No-Python mode, create or edit the MCP evidence files manually and update checkpoint fields.

@@ -9,8 +9,10 @@ from pathlib import Path
 
 try:
     from _utils import append_event, load_json, now
+    from dashboard_labels import QUALITY_LABELS, TEXT
 except ImportError:
     from scripts._utils import append_event, load_json, now
+    from scripts.dashboard_labels import QUALITY_LABELS, TEXT
 
 
 DASHBOARD_FILE = "13-dashboard.html"
@@ -92,6 +94,18 @@ def progress_bar(label: str, value: int) -> str:
     ).format(width=value)
 
 
+def mcp_item_names(mcp: dict) -> str:
+    if not mcp:
+        return "-"
+    names: list[str] = []
+    for key in ["servers", "tools", "resources", "components"]:
+        for item in mcp.get(key, []):
+            name = item.get("name") if isinstance(item, dict) else ""
+            if name:
+                names.append(str(name))
+    return "、".join(names) if names else "-"
+
+
 def render_dashboard(folder: Path) -> str:
     checkpoint = load_json(folder / "11-checkpoint.json")
     trace = load_json(folder / "trace-coverage.json")
@@ -117,7 +131,15 @@ def render_dashboard(folder: Path) -> str:
     checks_passed = metrics.get("checks_passed", 0)
     review_open = metrics.get("review_findings_open", 0)
     review_closed = metrics.get("review_findings_closed", 0)
-    mcp_items = len(mcp.get("servers", [])) + len(mcp.get("tools", [])) + len(mcp.get("components", [])) if mcp else 0
+    mcp_items = (
+        len(mcp.get("servers", []))
+        + len(mcp.get("tools", []))
+        + len(mcp.get("resources", []))
+        + len(mcp.get("components", []))
+        if mcp
+        else 0
+    )
+    mcp_names = mcp_item_names(mcp)
 
     milestone_cards = []
     for milestone in milestones:
@@ -139,7 +161,7 @@ def render_dashboard(folder: Path) -> str:
         for gate, status in gates.items()
     )
     quality_rows = "".join(
-        f"<tr><td>{esc(key.replace('_', ' ').title())}</td><td>{pill(value)}</td></tr>"
+        f"<tr><td>{esc(QUALITY_LABELS.get(key, key))}</td><td>{pill(value)}</td></tr>"
         for key, value in quality.items()
     )
     review_rows = "".join(
@@ -151,7 +173,7 @@ def render_dashboard(folder: Path) -> str:
         f"<td>{esc(item.get('notes', ''))}</td>"
         "</tr>"
         for item in human_reviews
-    ) or '<tr><td colspan="5" class="empty">No human reviews recorded.</td></tr>'
+    ) or f'<tr><td colspan="5" class="empty">{TEXT["no_reviews"]}</td></tr>'
 
     event_rows = "".join(
         "<tr>"
@@ -160,11 +182,11 @@ def render_dashboard(folder: Path) -> str:
         f"<td>{esc(json.dumps(item.get('detail', {}), ensure_ascii=False))}</td>"
         "</tr>"
         for item in events
-    ) or '<tr><td colspan="3" class="empty">No events recorded.</td></tr>'
+    ) or f'<tr><td colspan="3" class="empty">{TEXT["no_events"]}</td></tr>'
 
     artifact_links = "".join(f'<a href="{esc(name)}">{esc(name)}</a>' for name in artifacts)
-    risk_items = "".join(f"<li>{esc(item)}</li>" for item in risks) or '<li class="empty">No risks recorded.</li>'
-    blocker_items = "".join(f"<li>{esc(item)}</li>" for item in blockers) or '<li class="empty">No blockers recorded.</li>'
+    risk_items = "".join(f"<li>{esc(item)}</li>" for item in risks) or f'<li class="empty">{TEXT["no_risks"]}</li>'
+    blocker_items = "".join(f"<li>{esc(item)}</li>" for item in blockers) or f'<li class="empty">{TEXT["no_blockers"]}</li>'
 
     task_rate = percent(tasks_completed, tasks_total)
     check_rate = percent(checks_passed, checks_total)
@@ -176,7 +198,7 @@ def render_dashboard(folder: Path) -> str:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SDD Delivery Dashboard - {esc(checkpoint.get('feature', folder.name))}</title>
+  <title>{TEXT["dashboard_title"]} - {esc(checkpoint.get('feature', folder.name))}</title>
   <style>
     :root {{
       color-scheme: light;
@@ -277,78 +299,79 @@ def render_dashboard(folder: Path) -> str:
 </head>
 <body>
   <header>
-    <h1>SDD Delivery Dashboard</h1>
-    <p>{esc(checkpoint.get('feature', folder.name))} · generated {esc(generated_at)}</p>
+    <h1>{TEXT["dashboard_title"]}</h1>
+    <p>{esc(checkpoint.get('feature', folder.name))} · {TEXT["generated"]} {esc(generated_at)}</p>
   </header>
   <main class="grid">
     <div class="grid top">
       <section>
-        <h2>Current Status</h2>
+        <h2>{TEXT["current_status"]}</h2>
         <div class="summary">
-          <div class="meta"><span>Goal</span><strong>{esc(checkpoint.get('goal', '') or '-')}</strong></div>
-          <div class="meta"><span>Next action</span><strong>{esc(checkpoint.get('next_action', '') or '-')}</strong></div>
-          <div class="meta"><span>Current phase</span><strong>{esc(checkpoint.get('current_phase', '') or '-')}</strong></div>
-          <div class="meta"><span>Active task</span><strong>{esc(checkpoint.get('active_task', '') or '-')}</strong></div>
+          <div class="meta"><span>{TEXT["goal"]}</span><strong>{esc(checkpoint.get('goal', '') or '-')}</strong></div>
+          <div class="meta"><span>{TEXT["next_action"]}</span><strong>{esc(checkpoint.get('next_action', '') or '-')}</strong></div>
+          <div class="meta"><span>{TEXT["current_phase"]}</span><strong>{esc(checkpoint.get('current_phase', '') or '-')}</strong></div>
+          <div class="meta"><span>{TEXT["active_task"]}</span><strong>{esc(checkpoint.get('active_task', '') or '-')}</strong></div>
         </div>
       </section>
       <section>
-        <h2>Delivery Metrics</h2>
-        {progress_bar("Tasks completed", task_rate)}
-        {progress_bar("Checks passed", check_rate)}
-        {progress_bar("Review findings closed", review_rate)}
+        <h2>{TEXT["delivery_metrics"]}</h2>
+        {progress_bar(TEXT["tasks_completed"], task_rate)}
+        {progress_bar(TEXT["checks_passed"], check_rate)}
+        {progress_bar(TEXT["review_findings_closed"], review_rate)}
       </section>
     </div>
 
     <section>
-      <h2>Milestones</h2>
+      <h2>{TEXT["milestones"]}</h2>
       <div class="grid milestones">{''.join(milestone_cards)}</div>
     </section>
 
     <div class="grid two">
       <section>
-        <h2>Gate Status</h2>
-        <table><thead><tr><th>Gate</th><th>Status</th></tr></thead><tbody>{gate_rows}</tbody></table>
+        <h2>{TEXT["gate_status"]}</h2>
+        <table><thead><tr><th>{TEXT["gate"]}</th><th>{TEXT["status"]}</th></tr></thead><tbody>{gate_rows}</tbody></table>
       </section>
       <section>
-        <h2>Quality Status</h2>
-        <table><thead><tr><th>Area</th><th>Status</th></tr></thead><tbody>{quality_rows}</tbody></table>
+        <h2>{TEXT["quality_status"]}</h2>
+        <table><thead><tr><th>{TEXT["area"]}</th><th>{TEXT["status"]}</th></tr></thead><tbody>{quality_rows}</tbody></table>
       </section>
     </div>
 
     <div class="grid three">
       <section>
-        <h2>MCP Evidence</h2>
+        <h2>{TEXT["mcp_evidence"]}</h2>
         <div class="summary">
-          <div class="metric"><span>Capability</span><strong>{pill(mcp_switch.get('state', 'ask'))}</strong></div>
-          <div class="metric"><span>Discovery</span><strong>{pill(mcp.get('status', 'not_started') if mcp else 'not_started')}</strong></div>
-          <div class="metric"><span>Items</span><strong>{esc(mcp_items)}</strong></div>
-          <div class="metric"><span>Source</span><strong>{esc(mcp.get('source', '') if mcp else '-')}</strong></div>
+          <div class="metric"><span>{TEXT["capability"]}</span><strong>{pill(mcp_switch.get('state', 'ask'))}</strong></div>
+          <div class="metric"><span>{TEXT["discovery"]}</span><strong>{pill(mcp.get('status', 'not_started') if mcp else 'not_started')}</strong></div>
+          <div class="metric"><span>{TEXT["items"]}</span><strong>{esc(mcp_items)}</strong></div>
+          <div class="metric"><span>{TEXT["source"]}</span><strong>{esc(mcp.get('source', '') if mcp else '-')}</strong></div>
+          <div class="meta"><span>{TEXT["discovered_items"]}</span><strong>{esc(mcp_names)}</strong></div>
         </div>
       </section>
       <section>
-        <h2>Risks</h2>
+        <h2>{TEXT["risks"]}</h2>
         <ul>{risk_items}</ul>
       </section>
       <section>
-        <h2>Blockers</h2>
+        <h2>{TEXT["blockers"]}</h2>
         <ul>{blocker_items}</ul>
       </section>
     </div>
 
     <section>
-      <h2>Human Reviews</h2>
-      <table><thead><tr><th>Time</th><th>Reviewer</th><th>Target</th><th>Result</th><th>Notes</th></tr></thead><tbody>{review_rows}</tbody></table>
+      <h2>{TEXT["human_reviews"]}</h2>
+      <table><thead><tr><th>{TEXT["time"]}</th><th>{TEXT["reviewer"]}</th><th>{TEXT["target"]}</th><th>{TEXT["result"]}</th><th>{TEXT["notes"]}</th></tr></thead><tbody>{review_rows}</tbody></table>
     </section>
 
     <section>
-      <h2>Recent Events</h2>
-      <table><thead><tr><th>Time</th><th>Event</th><th>Detail</th></tr></thead><tbody>{event_rows}</tbody></table>
+      <h2>{TEXT["recent_events"]}</h2>
+      <table><thead><tr><th>{TEXT["time"]}</th><th>{TEXT["event"]}</th><th>{TEXT["detail"]}</th></tr></thead><tbody>{event_rows}</tbody></table>
     </section>
 
     <section>
-      <h2>Evidence Files</h2>
+      <h2>{TEXT["evidence_files"]}</h2>
       <div class="artifact-list">{artifact_links}</div>
-      <p class="footer">Dashboard is a generated view. Source of truth remains Markdown/JSON artifacts in this folder.</p>
+      <p class="footer">{TEXT["footer"]}</p>
     </section>
   </main>
 </body>

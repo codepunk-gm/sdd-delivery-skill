@@ -5,7 +5,10 @@ from __future__ import annotations
 import sys
 import tempfile
 import unittest
+import json
+import subprocess
 from pathlib import Path
+from types import SimpleNamespace
 
 # Add skill directory to path for imports
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -25,7 +28,9 @@ from scripts.write_checkpoint import (
 from scripts.manage_capabilities import executor_plan, load_registry
 from scripts.generate_dashboard import render_dashboard
 from scripts.record_mcp_discovery import load_discovery, parse_record, render_selection
-from scripts.setup_team_rules import default_rules, validate_rules
+from scripts.setup_team_rules import apply_sql_updates, default_rules, parse_bool, parse_feature_exception, parse_sql_rule, validate_rules
+
+SKILL_ROOT = Path(__file__).resolve().parents[1]
 
 
 class TestSafeFeatureName(unittest.TestCase):
@@ -350,12 +355,15 @@ class TestMcpDiscovery(unittest.TestCase):
 
         self.assertEqual(discovery["feature"], "feature-mcp")
         self.assertEqual(discovery["status"], "not_started")
+        self.assertEqual(discovery["query_intent"], "")
         self.assertEqual(discovery["servers"], [])
+        self.assertEqual(discovery["resources"], [])
 
     def test_render_selection_includes_discovered_component(self):
         discovery = {
             "servers": [],
             "tools": [],
+            "resources": [parse_record("BillingQueryAPI::internal-platform::available::Use for billing queries", "resource")],
             "components": [parse_record("DataTable::design-system::available::Use for dashboard", "component")],
             "unavailable": [],
         }
@@ -363,7 +371,9 @@ class TestMcpDiscovery(unittest.TestCase):
         text = render_selection(discovery)
 
         self.assertIn("DataTable", text)
+        self.assertIn("BillingQueryAPI", text)
         self.assertIn("## 选择决策", text)
+        self.assertIn("## 使用约束", text)
 
 
 class TestDashboardGeneration(unittest.TestCase):
@@ -385,8 +395,12 @@ class TestDashboardGeneration(unittest.TestCase):
 
             html = render_dashboard(folder)
 
-        self.assertIn("SDD Delivery Dashboard", html)
+        self.assertIn("SDD Delivery 交付看板", html)
         self.assertIn("feature-dashboard", html)
+        self.assertIn("当前状态", html)
+        self.assertIn("目标", html)
+        self.assertNotIn(">Goal<", html)
+        self.assertNotIn(">Current phase<", html)
         self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", html)
         self.assertNotIn("<script>alert(1)</script>", html)
 
@@ -414,9 +428,10 @@ class TestDashboardGeneration(unittest.TestCase):
 
             html = render_dashboard(folder)
 
-        self.assertIn("MCP Evidence", html)
+        self.assertIn("MCP 证据", html)
         self.assertIn("available", html)
         self.assertIn("2", html)
+        self.assertNotIn(">MCP Evidence<", html)
 
 
 class TestTeamRules(unittest.TestCase):
@@ -427,6 +442,105 @@ class TestTeamRules(unittest.TestCase):
 
         self.assertEqual(issues, [])
 
+    def test_default_rules_include_sql_standards(self):
+        rules = default_rules()
+        sql = rules["sql_standards"]
+
+        self.assertTrue(sql["enabled"])
+        self.assertEqual(sql["scope_order"], ["global", "project", "feature_exception"])
+        self.assertTrue(sql["global"]["query_rules"]["forbid_select_star"])
+        self.assertTrue(sql["global"]["query_rules"]["require_parameterized_query"])
+        self.assertIn("project_overrides", sql)
+        self.assertIn("feature_exceptions", sql)
+
+    def test_sql_project_overrides_are_valid(self):
+        rules = default_rules()
+        rules["sql_standards"]["project_overrides"].update({
+            "dialect": "postgresql",
+            "schema": "billing",
+            "table_prefix": "biz_",
+            "migration_tool": "alembic",
+            "allowed_legacy_exceptions": [
+                {
+                    "object": "legacy_order",
+                    "rule": "table_case",
+                    "reason": "Existing ERP-managed table",
+                }
+            ],
+        })
+
+        issues, _ = validate_rules(rules)
+
+        self.assertEqual(issues, [])
+
+    def test_sql_feature_exception_requires_reason_and_approver(self):
+        rules = default_rules()
+        rules["sql_standards"]["feature_exceptions"] = [
+            {
+                "rule": "require_index_for_filter_columns",
+                "scope": "SPEC-3 export",
+            }
+        ]
+
+        issues, _ = validate_rules(rules)
+
+        self.assertIn("sql_standards.feature_exceptions[1] missing field: reason", issues)
+        self.assertIn("sql_standards.feature_exceptions[1] missing field: approver", issues)
+        self.assertIn("sql_standards.feature_exceptions[1] missing field: expires", issues)
+
+    def test_sql_cli_updates_project_rules(self):
+        rules = default_rules()
+        args = SimpleNamespace(
+            sql_enabled=parse_bool("true"),
+            sql_dialect="postgresql",
+            sql_schema="billing",
+            sql_table_prefix="biz_",
+            sql_migration_tool="alembic",
+            sql_rule=[parse_sql_rule("query.forbid_select_star=false")],
+            sql_allow_legacy=[],
+            sql_feature_exception=[],
+        )
+
+        changed = apply_sql_updates(rules, args)
+        sql = rules["sql_standards"]
+
+        self.assertTrue(changed)
+        self.assertEqual(sql["project_overrides"]["dialect"], "postgresql")
+        self.assertEqual(sql["project_overrides"]["schema"], "billing")
+        self.assertEqual(sql["project_overrides"]["table_prefix"], "biz_")
+        self.assertEqual(sql["project_overrides"]["migration_tool"], "alembic")
+        self.assertFalse(sql["global"]["query_rules"]["forbid_select_star"])
+
+    def test_sql_cli_adds_legacy_and_feature_exceptions(self):
+        rules = default_rules()
+        args = SimpleNamespace(
+            sql_enabled=None,
+            sql_dialect=None,
+            sql_schema=None,
+            sql_table_prefix=None,
+            sql_migration_tool=None,
+            sql_rule=[],
+            sql_allow_legacy=[
+                {
+                    "object": "legacy_order",
+                    "rule": "table_case",
+                    "reason": "Existing upstream table",
+                }
+            ],
+            sql_feature_exception=[
+                parse_feature_exception("require_index_for_filter_columns::SPEC-3 export::Small archive table::tech lead::Remove after 2026-09-01")
+            ],
+        )
+
+        changed = apply_sql_updates(rules, args)
+        issues, warnings = validate_rules(rules)
+
+        self.assertTrue(changed)
+        self.assertEqual(issues, [])
+        self.assertEqual(warnings, [])
+        self.assertEqual(rules["sql_standards"]["project_overrides"]["allowed_legacy_exceptions"][0]["object"], "legacy_order")
+        self.assertEqual(rules["sql_standards"]["feature_exceptions"][0]["approver"], "tech lead")
+
     def test_invalid_threshold_is_rejected(self):
         rules = default_rules()
         rules["thresholds"]["max_params"] = 0
@@ -434,6 +548,92 @@ class TestTeamRules(unittest.TestCase):
         issues, _ = validate_rules(rules)
 
         self.assertTrue(any("max_params" in issue for issue in issues))
+
+
+class TestGoldenWorkflow(unittest.TestCase):
+    """End-to-end checks for the script-backed happy path."""
+
+    def run_script(self, name: str, *args: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, str(SKILL_ROOT / "scripts" / name), *args],
+            check=True,
+            text=True,
+            capture_output=True,
+        )
+
+    def test_prd_to_dashboard_workflow_uses_chinese_surface_labels(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            prd = root / "prd.md"
+            prd.write_text(
+                "# 需求\n\n- 用户 必须能够订阅套餐\n- 系统 需要支持发票下载\n",
+                encoding="utf-8",
+            )
+
+            self.run_script("init_artifacts.py", "billing-flow", "--root", str(root), "--with-mcp")
+            folder = root / ".sdd-delivery" / "billing-flow"
+            self.run_script("parse_prd_to_spec.py", str(prd), str(folder), "--force")
+            self.run_script(
+                "record_mcp_discovery.py",
+                str(folder),
+                "--enable-capability",
+                "--source",
+                "测试工具",
+                "--query-intent",
+                "查找企业内部可复用的账单查询 API 和表格组件",
+                "--resource",
+                "账单查询API::internal-platform::available::用于账单列表查询",
+                "--component",
+                "订阅表格::design-system::available::用于账单列表",
+            )
+            self.run_script("sync_observability.py", str(folder))
+            self.run_script("generate_dashboard.py", str(folder))
+            result = self.run_script("validate_artifacts.py", str(folder))
+
+            prd_text = (folder / "00-prd.md").read_text(encoding="utf-8")
+            spec_text = (folder / "01-spec.md").read_text(encoding="utf-8")
+            trace_text = (folder / "03-requirement-trace.md").read_text(encoding="utf-8")
+            observability_text = (folder / "12-observability.md").read_text(encoding="utf-8")
+            dashboard_text = (folder / "13-dashboard.html").read_text(encoding="utf-8")
+            selection_text = (folder / "mcp-component-selection.md").read_text(encoding="utf-8")
+            discovery = json.loads((folder / "mcp-discovery.json").read_text(encoding="utf-8"))
+
+        self.assertIn("| PRD ID | 需求 | 优先级 | 备注 |", prd_text)
+        self.assertIn("## 业务目标", prd_text)
+        self.assertIn("| Spec ID | PRD ID | 行为 | 验收标准 | 优先级 |", spec_text)
+        self.assertIn("待补充：可观测的验收标准", spec_text)
+        self.assertIn("| PRD ID | Spec ID | 验收标准 | 方案章节 | 任务 ID | 代码文件 | 单测 | 状态 |", trace_text)
+        self.assertIn("# 可观测面板", observability_text)
+        self.assertIn("## 质量状态", observability_text)
+        self.assertIn("SDD Delivery 交付看板", dashboard_text)
+        self.assertIn("订阅表格", dashboard_text)
+        self.assertIn("账单查询API", dashboard_text)
+        self.assertIn("## 使用约束", selection_text)
+        self.assertEqual(discovery["query_intent"], "查找企业内部可复用的账单查询 API 和表格组件")
+        self.assertNotIn(">Goal<", dashboard_text)
+        self.assertNotIn("Delivery Dashboard", observability_text)
+        self.assertTrue(json.loads(result.stdout)["ok"])
+
+    def test_validate_artifacts_reports_invalid_mcp_json(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self.run_script("init_artifacts.py", "bad-mcp", "--root", str(root), "--with-mcp")
+            folder = root / ".sdd-delivery" / "bad-mcp"
+            checkpoint = json.loads((folder / "11-checkpoint.json").read_text(encoding="utf-8"))
+            checkpoint["capabilities"]["mcp_component_protocol"]["state"] = "enabled"
+            (folder / "11-checkpoint.json").write_text(json.dumps(checkpoint, ensure_ascii=False), encoding="utf-8")
+            (folder / "mcp-discovery.json").write_text("{not-json", encoding="utf-8")
+
+            result = subprocess.run(
+                [sys.executable, str(SKILL_ROOT / "scripts" / "validate_artifacts.py"), str(folder)],
+                check=False,
+                text=True,
+                capture_output=True,
+            )
+
+        payload = json.loads(result.stdout)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertTrue(any("mcp-discovery invalid json" in issue for issue in payload["issues"]))
 
 
 if __name__ == "__main__":

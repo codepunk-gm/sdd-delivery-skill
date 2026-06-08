@@ -1,7 +1,7 @@
 {
   "name": "sdd-delivery",
-  "description": "Spec-driven delivery workflow for PRD-to-code engineering with user-approved solutions, pluggable capabilities, traceability, tests, checkpoints, and observability.",
-  "version": "0.3.0",
+  "description": "面向 AI 编程助手的 Spec-first 研发交付流程，把 PRD、方案、任务、测试、检查点和可观测交付证据串成可审查链路。",
+  "version": "0.7.0",
   "author": {
     "name": "SDD Delivery contributors"
   }

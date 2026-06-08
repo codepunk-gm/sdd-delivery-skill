@@ -69,6 +69,20 @@
 
 - CRITICAL: N | HIGH: N | MEDIUM: N | LOW: N
 
+## SQL 规范审查
+
+> 如本次涉及 SQL、ORM、迁移、查询构造或数据访问层，需要根据 `.sdd-delivery/team-rules.json` 的 `sql_standards` 审查全局规则、项目覆盖和需求级例外。
+
+| 检查项 | 状态 | 证据 | 备注 |
+|---|---|---|---|
+| 参数化查询 / 禁止字符串拼接 SQL | pending | | |
+| 禁止生产查询 `SELECT *` | pending | | |
+| 分页包含 LIMIT 和确定性 ORDER BY | pending | | |
+| 过滤 / JOIN 字段有索引规划 | pending | | |
+| schema 变更包含 migration / backfill / rollback | pending | | |
+| 多写操作事务边界明确 | pending | | |
+| 项目覆盖和需求级例外已记录并确认 | pending | | |
+
 ## 风险
 
 | 风险 | 严重级别 | 缓解措施 | 状态 |

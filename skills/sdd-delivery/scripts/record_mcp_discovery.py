@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Record MCP discovery and component-selection evidence for SDD Delivery."""
+"""Record MCP discovery and capability-selection evidence for SDD Delivery."""
 from __future__ import annotations
 
 import argparse
@@ -27,8 +27,10 @@ def default_discovery(feature: str) -> dict:
         "status": "not_started",
         "discovered_at": "",
         "source": "",
+        "query_intent": "",
         "servers": [],
         "tools": [],
+        "resources": [],
         "components": [],
         "unavailable": [],
         "notes": "",
@@ -39,13 +41,14 @@ def load_discovery(folder: Path) -> dict:
     data = load_json(folder / DISCOVERY_FILE)
     if not data:
         data = default_discovery(folder.name)
-    for key in ["servers", "tools", "components", "unavailable"]:
+    for key in ["servers", "tools", "resources", "components", "unavailable"]:
         if not isinstance(data.get(key), list):
             data[key] = []
     data.setdefault("feature", folder.name)
     data.setdefault("schema_version", "1.0")
     data.setdefault("status", "not_started")
     data.setdefault("source", "")
+    data.setdefault("query_intent", "")
     data.setdefault("notes", "")
     data.setdefault("discovered_at", "")
     return data
@@ -76,14 +79,14 @@ def render_selection(discovery: dict, existing_text: str = "") -> str:
     lines = [
         "# MCP 组件选择记录",
         "",
-        "> 使用说明：启用“组件协议支持”后维护本文件。记录发现到的 MCP server/tool/component、选择理由、fallback 决策和验证证据。不要只在聊天里说明。",
+        "> 使用说明：启用“企业 MCP 能力复用”后维护本文件。实现前先通过 MCP 查询企业内部可复用能力，记录发现到的 server/tool/resource/component、选择理由、使用约束、fallback 决策和验证证据。不要只在聊天里说明。",
         "",
         "## 发现摘要",
         "",
         "| 类型 | 名称 | 来源 | 状态 | 说明 |",
         "|---|---|---|---|---|",
     ]
-    for kind, key in [("server", "servers"), ("tool", "tools"), ("component", "components")]:
+    for kind, key in [("server", "servers"), ("tool", "tools"), ("resource", "resources"), ("component", "components")]:
         for item in discovery.get(key, []):
             lines.append(
                 f"| {kind} | {item.get('name', '')} | {item.get('source', '')} | {item.get('status', '')} | {item.get('notes', '')} |"
@@ -95,7 +98,7 @@ def render_selection(discovery: dict, existing_text: str = "") -> str:
     if len(lines) == 7:
         lines.append("| - | - | - | pending | - |")
 
-    preserved_sections = ["## 选择决策", "## Fallback 记录", "## 集成验证"]
+    preserved_sections = ["## 选择决策", "## 使用约束", "## Fallback 记录", "## 集成验证"]
     if existing_text:
         for section in preserved_sections:
             start = existing_text.find(section)
@@ -113,12 +116,14 @@ def render_selection(discovery: dict, existing_text: str = "") -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Record MCP discovery evidence for an SDD Delivery feature.")
+    parser = argparse.ArgumentParser(description="Record enterprise MCP capability discovery evidence for an SDD Delivery feature.")
     parser.add_argument("folder", help="Feature artifact folder")
     parser.add_argument("--source", default="", help="Where the discovery came from, for example Codex MCP tools or user-provided output.")
+    parser.add_argument("--query-intent", default="", help="What enterprise capability the agent tried to discover.")
     parser.add_argument("--status", choices=["not_started", "available", "partial", "unavailable"], default="available")
     parser.add_argument("--server", action="append", default=[], help="Record server as name::source::status::notes.")
     parser.add_argument("--tool", action="append", default=[], help="Record tool as name::source::status::notes.")
+    parser.add_argument("--resource", action="append", default=[], help="Record resource as name::source::status::notes.")
     parser.add_argument("--component", action="append", default=[], help="Record component as name::source::status::notes.")
     parser.add_argument("--unavailable", action="append", default=[], help="Record unavailable MCP capability as name::source::status::notes.")
     parser.add_argument("--notes", default="")
@@ -130,6 +135,7 @@ def main() -> int:
     discovery = load_discovery(folder)
     discovery["status"] = args.status
     discovery["source"] = args.source or discovery.get("source", "")
+    discovery["query_intent"] = args.query_intent or discovery.get("query_intent", "")
     discovery["notes"] = args.notes or discovery.get("notes", "")
     discovery["discovered_at"] = now()
 
@@ -137,6 +143,8 @@ def main() -> int:
         append_unique(discovery["servers"], parse_record(spec, "server"))
     for spec in args.tool:
         append_unique(discovery["tools"], parse_record(spec, "tool"))
+    for spec in args.resource:
+        append_unique(discovery["resources"], parse_record(spec, "resource"))
     for spec in args.component:
         append_unique(discovery["components"], parse_record(spec, "component"))
     for spec in args.unavailable:
@@ -150,13 +158,13 @@ def main() -> int:
 
     checkpoint = load_checkpoint_or_default(checkpoint_path(folder))
     if args.enable_capability:
-        set_capability(checkpoint, "mcp_component_protocol=enabled:MCP discovery evidence recorded")
+        set_capability(checkpoint, "mcp_component_protocol=enabled:MCP capability discovery evidence recorded")
     checkpoint.setdefault("changed_files", [])
     for name in [DISCOVERY_FILE, SELECTION_FILE]:
         if name not in checkpoint["changed_files"]:
             checkpoint["changed_files"].append(name)
     checkpoint.setdefault("metrics", {})["mcp_items_discovered"] = (
-        len(discovery.get("servers", [])) + len(discovery.get("tools", [])) + len(discovery.get("components", []))
+        len(discovery.get("servers", [])) + len(discovery.get("tools", [])) + len(discovery.get("resources", [])) + len(discovery.get("components", []))
     )
     checkpoint["updated_at"] = now()
     write_json(checkpoint_path(folder), checkpoint)
@@ -165,6 +173,7 @@ def main() -> int:
         "status": discovery["status"],
         "servers": len(discovery["servers"]),
         "tools": len(discovery["tools"]),
+        "resources": len(discovery["resources"]),
         "components": len(discovery["components"]),
         "unavailable": len(discovery["unavailable"]),
     })

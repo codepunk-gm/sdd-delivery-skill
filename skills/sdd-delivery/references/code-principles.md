@@ -220,6 +220,63 @@ Enabled when this module is active, Per-Task Review checks:
 
 ---
 
+## Module G: SQL 规范 (SQL Standards)
+
+Toggle: `sql_standards.enabled: true`
+
+SQL standards live in `.sdd-delivery/team-rules.json`, not in ad hoc chat instructions. They support global rules, project overrides, and feature-level exceptions.
+
+### G1. Global Rules
+
+Default global SQL rules:
+
+- no `SELECT *` in production queries
+- all user or external inputs use parameterized queries
+- no string-concatenated SQL
+- pagination requires `LIMIT` and deterministic `ORDER BY`
+- filter and join columns need an index plan
+- schema changes require migrations
+- destructive changes require explicit approval, backfill plan, and rollback plan
+- multi-write operations need explicit transaction boundaries
+
+### G2. Project Overrides
+
+Use `sql_standards.project_overrides` for project-specific facts:
+
+- database dialect, such as PostgreSQL, MySQL, SQLite, Oracle
+- schema name or tenant layout
+- table prefix or legacy naming pattern
+- migration tool
+- allowed legacy exceptions
+
+Project overrides should explain existing constraints. They should not silently weaken global rules.
+
+### G3. Feature Exceptions
+
+Use `sql_standards.feature_exceptions` for temporary exceptions. Each exception must include:
+
+- `rule`
+- `scope`
+- `reason`
+- `approver`
+- `expires`
+
+Feature exceptions are reviewed at Solution Review and Delivery Review.
+
+### G4. Review Checklist
+
+When SQL files, migrations, query builders, ORM models, or data-access code change, check:
+
+- [ ] Query uses parameters rather than string concatenation
+- [ ] No production `SELECT *`
+- [ ] Pagination has deterministic ordering
+- [ ] New filters / joins have an index plan or accepted reason
+- [ ] Schema changes have migration, backfill, rollback, and compatibility notes
+- [ ] Transaction boundaries are explicit for multi-write flows
+- [ ] Project overrides and feature exceptions are recorded in team rules
+
+---
+
 ## Per-Language Quick Reference
 
 ### TypeScript
@@ -254,7 +311,7 @@ Return (T, error); wrap errors with fmt.Errorf("context: %w", err)
 
 - **Per-Task Review (Gate 9):** Enabled modules are checked. Boundary + Size violations are P0.
 - **Delivery Review (Gate 12):** Full code principles audit against enabled modules.
-- **Team Rules:** Toggle modules in `references/team-rules.md`. Add team-specific overrides.
+- **Team Rules:** Toggle modules in `references/team-rules.md`. Add team-specific overrides. SQL standards are maintained in `.sdd-delivery/team-rules.json` with global rules, project overrides, and feature exceptions.
 
 ## Design References
 

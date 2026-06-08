@@ -14,6 +14,7 @@ _Size:_ M
   - **Files:** src/api/auth/login.py, src/api/auth/__init__.py
   - **Verify:** `pytest tests/api/auth/test_login.py -v`
   - **Pre-TDD:** 先写测试并确认 RED，再实现
+  - **MCP / 企业能力:** 不涉及企业 MCP 能力
 
 ### T2: [SPEC-2] 增加登录限流
 
@@ -24,6 +25,7 @@ _Size:_ S
 - [ ] T2 [SPEC-2] 在 src/middleware/rate_limit/login_limiter.py 增加限流中间件
   - **Files:** src/middleware/rate_limit/login_limiter.py
   - **Verify:** `pytest tests/middleware/rate_limit/test_login_limiter.py -v`
+  - **MCP / 企业能力:** 不涉及企业 MCP 能力
 
 ## 实现备注
 

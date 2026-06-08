@@ -54,7 +54,7 @@ def main() -> int:
     parser.add_argument("feature", help="Feature name, for example add-login-rate-limit")
     parser.add_argument("--root", default=".", help="Project root. Defaults to current directory.")
     parser.add_argument("--force", action="store_true", help="Overwrite existing artifacts.")
-    parser.add_argument("--with-mcp", action="store_true", help="Also create MCP discovery and component-selection evidence artifacts.")
+    parser.add_argument("--with-mcp", action="store_true", help="Also create MCP discovery and capability-selection evidence artifacts.")
     args = parser.parse_args()
 
     feature = safe_feature_name(args.feature)

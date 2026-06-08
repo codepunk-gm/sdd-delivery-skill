@@ -1,30 +1,30 @@
-﻿{
+{
   "name": "sdd-delivery",
-  "version": "0.3.0",
-  "description": "Spec-driven delivery workflow for PRD-to-code engineering with user-approved solutions, pluggable capabilities, traceability, tests, checkpoints, and observability.",
+  "version": "0.7.0",
+  "description": "面向 AI 编程助手的 Spec-first 研发交付流程，把 PRD、方案、任务、测试、检查点和可观测交付证据串成可审查链路。",
   "author": {
     "name": "SDD Delivery contributors"
   },
   "skills": "./skills/",
   "interface": {
     "displayName": "SDD Delivery",
-    "shortDescription": "PRD-to-Spec delivery workflow for AI coding agents.",
-    "longDescription": "SDD Delivery turns PRDs into reviewed Specs, user-approved technical solutions, traceable tasks, unit tests, checkpoints, and observable engineering artifacts with optional capability modules.",
+    "shortDescription": "让 AI 从 PRD 到 Spec、方案、任务、测试和交付证据链。",
+    "longDescription": "SDD Delivery 会把 PRD 转成可审查的 Spec、用户确认过的技术方案、可追踪任务、单测记录、checkpoint 和可观测交付产物，并按项目特征启用增强能力。",
     "developerName": "SDD Delivery contributors",
     "category": "Productivity",
     "capabilities": [
-      "PRD to Spec",
-      "Spec Review",
-      "Technical Solution",
-      "Solution Approval",
-      "Solution Review",
-      "Pluggable Capabilities",
-      "Team Rules",
-      "Trace Coverage",
-      "Unit Test Report",
-      "Checkpoint",
-      "GitHub PR/CI Assets"
+      "PRD 转 Spec",
+      "Spec 审查",
+      "技术方案",
+      "方案确认",
+      "方案审查",
+      "可插拔能力",
+      "团队规则",
+      "追踪覆盖",
+      "单测报告",
+      "检查点",
+      "GitHub PR/CI 资产"
     ],
-    "defaultPrompt": "Use $sdd-delivery to turn this PRD into Spec, solution, reviewed implementation tasks, unit tests, and observable delivery artifacts."
+    "defaultPrompt": "使用 $sdd-delivery，把这个 PRD 整理成 Spec、技术方案、审查清单、实现任务、单测计划和可观测交付产物。"
   }
 }

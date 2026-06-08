@@ -175,12 +175,18 @@ def main() -> int:
                         issues.append(f"empty MCP evidence file: {name}")
                 discovery_path = folder / "mcp-discovery.json"
                 if discovery_path.exists():
-                    discovery = json.loads(discovery_path.read_text(encoding="utf-8-sig"))
-                    if "status" not in discovery:
-                        issues.append("mcp-discovery missing field: status")
-                    for field in ["servers", "tools", "components", "unavailable"]:
-                        if field not in discovery:
-                            issues.append(f"mcp-discovery missing field: {field}")
+                    try:
+                        discovery = json.loads(discovery_path.read_text(encoding="utf-8-sig"))
+                    except json.JSONDecodeError as exc:
+                        issues.append(f"mcp-discovery invalid json: {exc}")
+                    else:
+                        if "status" not in discovery:
+                            issues.append("mcp-discovery missing field: status")
+                        for field in ["servers", "tools", "components", "unavailable"]:
+                            if field not in discovery:
+                                issues.append(f"mcp-discovery missing field: {field}")
+                        if "resources" not in discovery:
+                            warnings.append("mcp-discovery missing optional v0.5 field: resources")
         except json.JSONDecodeError as exc:
             issues.append(f"checkpoint invalid json: {exc}")
 

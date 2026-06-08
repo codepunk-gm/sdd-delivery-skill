@@ -180,8 +180,10 @@ Required fields:
   "status": "not_started|available|partial|unavailable",
   "discovered_at": "",
   "source": "",
+  "query_intent": "",
   "servers": [],
   "tools": [],
+  "resources": [],
   "components": [],
   "unavailable": [],
   "notes": ""
@@ -194,7 +196,8 @@ Optional but required when `capabilities.mcp_component_protocol.state` is `enabl
 
 Required sections:
 - `## 发现摘要` — discovered MCP servers, tools, components, or unavailable capabilities
-- `## 选择决策` — selected tool/component and rationale
+- `## 选择决策` — selected tool/resource/component/service/API/SDK and rationale
+- `## 使用约束` — parameters, permissions, endpoint, import path, call style, design constraints, or internal usage notes when available
 - `## Fallback 记录` — fallback decision and user confirmation when MCP is unavailable
 - `## 集成验证` — invocation, render, integration, or fallback verification evidence
 

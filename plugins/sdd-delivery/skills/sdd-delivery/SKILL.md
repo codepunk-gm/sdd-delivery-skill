@@ -22,8 +22,8 @@ It combines:
 - TDD structural blocking (RED → GREEN → REFACTOR)
 - parallel task markers for independent work
 - explicit user approval of solution and technology stack before implementation
-- optional pluggable capabilities with `enabled|disabled|ask` switches for frontend templates, Java modular projects, MCP components, and team rules
-- MCP discovery and component-selection evidence artifacts when component protocol support is enabled
+- optional pluggable capabilities with `enabled|disabled|ask` switches for frontend templates, Java modular projects, enterprise MCP capability discovery, and team rules
+- MCP discovery and capability-selection evidence artifacts when enterprise internal capabilities should be reused during implementation
 - unit test planning and execution
 - deterministic checkpoint recovery
 - observable delivery metrics
@@ -52,7 +52,7 @@ When principles conflict, state the conflict explicitly, propose a scope-limited
 
 ## Startup behavior
 
-When this skill is loaded for a new workflow and the user has not selected a specific phase, show the capability menu from `references/capability-menu.md` in concise form. Ask the user to send a PRD or choose a number.
+When this skill is loaded for a new workflow and the user has not selected a specific phase, first show the welcome opening from `references/interaction-model.md`, then show the capability menu from `references/capability-menu.md` in concise form. Ask the user to send a PRD, choose a number, configure preferences, or use light mode.
 
 If Python is unavailable, do not fail. Use No Python Mode from `references/ai-tool-usage.md`: create and update Markdown/JSON artifacts manually, then explain which script-backed automation was skipped.
 
@@ -111,6 +111,7 @@ Human-in-the-loop control is part of the workflow. Maintain milestones in `11-ch
 
 - Follow project instructions and architecture.
 - Read and write code files as UTF-8. Do not turn Chinese text into mojibake.
+- Keep user-visible language consistent. If the user writes in Chinese or the repo instructions are Chinese, use Chinese for menus, tables, dashboard labels, artifact headings, review summaries, and generated UI text. Keep only stable technical identifiers in English, such as `PRD`, `Spec`, `checkpoint`, `MCP`, file names, API names, class names, and code symbols. Do not mix translated and untranslated business labels in the same table or UI surface.
 - Prefer artifacts over chat memory.
 - Load only the context needed for the current phase.
 - Every repo fact must have a source (file path + line number).
@@ -121,7 +122,8 @@ Human-in-the-loop control is part of the workflow. Maintain milestones in `11-ch
 - At startup, infer or ask for artifact language preference, then record it in checkpoint preferences.
 - At startup, offer team-rule setup; users may configure or skip it.
 - Before phases with optional extension points, read `references/capability-registry.md` and apply capability switches from checkpoint.
-- When MCP component protocol support is enabled, record discovery and selection evidence in `mcp-discovery.json` and `mcp-component-selection.md` before hand-building a replacement.
+- When work can use enterprise internal capabilities and MCP capability reuse is enabled or still `ask`, discover available MCP tools/resources/components before implementation. Record discovery and selection evidence in `mcp-discovery.json` and `mcp-component-selection.md` before hand-building a replacement.
+- When work touches SQL, ORM models, migrations, query builders, or data-access code, read `.sdd-delivery/team-rules.json` and apply `sql_standards` during technical solution, implementation tasks, review, and delivery. Use global rules first, then project overrides, then feature exceptions. Ask before adding a new feature exception.
 - When discussing optional capabilities with the user, use user-facing names and benefits; hide internal adapter/executor terminology unless asked.
 - Do not modify unrelated files. Boundary violations are P0 rejections.
 - Do not treat stale code facts as durable memory.
@@ -240,22 +242,22 @@ Human-in-the-loop control is part of the workflow. Maintain milestones in `11-ch
 Before implementation, state or update:
 
 ```markdown
-## Context Contract
+## 上下文契约
 
-Feature:
-Active phase:
-Active task:
-Spec items:
-In scope:
-Out of scope:
-Boundary:
-Depends on:
-Relevant files:
-Verification:
-Stop conditions:
-Enabled capabilities:
-Capability switches:
-Solution approval:
+需求：
+当前阶段：
+当前任务：
+Spec 条目：
+范围内：
+范围外：
+边界：
+依赖：
+相关文件：
+验证：
+停止条件：
+已启用能力：
+能力开关：
+方案确认：
 ```
 
 ## Reference loading
